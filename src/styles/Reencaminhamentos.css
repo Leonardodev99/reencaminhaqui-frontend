@@ -1,0 +1,170 @@
+/* Estilos da página de reencaminhamentos (Reencaminhamentos.jsx) */
+
+.reenv-btn {
+  border: 1px solid #e2e6ec;
+  background: #fff;
+  color: #1c2430;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.reenv-btn:hover:not(:disabled) {
+  background: #eceff3;
+}
+
+.reenv-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Filtros por estado */
+.reenv-filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.reenv-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid #e2e6ec;
+  background: #fff;
+  color: #1c2430;
+  padding: 7px 12px;
+  border-radius: 999px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.reenv-chip:hover {
+  background: #f4f6f9;
+}
+
+.reenv-chip span {
+  min-width: 20px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: #eceff3;
+  color: #6b7686;
+  font-size: 12px;
+  text-align: center;
+}
+
+.reenv-chip-ativo {
+  background: #3a74c4;
+  border-color: #3a74c4;
+  color: #fff;
+}
+
+.reenv-chip-ativo:hover {
+  background: #2f64ad;
+}
+
+.reenv-chip-ativo span {
+  background: rgba(255, 255, 255, 0.25);
+  color: #fff;
+}
+
+/* Tabela */
+.reenv-card {
+  background: #fff;
+  border: 1px solid #e2e6ec;
+  border-radius: 10px;
+}
+
+.reenv-tabela-wrap {
+  overflow-x: auto;
+}
+
+.reenv-tabela {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.reenv-tabela th {
+  text-align: left;
+  padding: 12px 16px;
+  border-bottom: 1px solid #e2e6ec;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #6b7686;
+  white-space: nowrap;
+}
+
+.reenv-tabela td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #e2e6ec;
+  vertical-align: middle;
+}
+
+.reenv-tabela tr:last-child td {
+  border-bottom: 0;
+}
+
+.reenv-tabela tbody tr:hover {
+  background: #fafbfc;
+}
+
+.reenv-mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 13px;
+}
+
+.reenv-muted {
+  color: #6b7686;
+}
+
+.reenv-erro {
+  color: #b91c1c;
+  max-width: 320px;
+}
+
+/* Barra de tentativas */
+.reenv-tentativas {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.reenv-tentativas-barra {
+  width: 64px;
+  height: 6px;
+  border-radius: 999px;
+  background: #eceff3;
+  overflow: hidden;
+}
+
+.reenv-tentativas-barra span {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: #3a74c4;
+}
+
+.reenv-tentativas-barra .reenv-esgotadas {
+  background: #b91c1c;
+}
+
+.reenv-tentativas-num {
+  font-size: 13px;
+  color: #6b7686;
+  white-space: nowrap;
+}
+
+.reenv-vazio {
+  padding: 36px 16px;
+  text-align: center;
+  color: #6b7686;
+  font-size: 14px;
+}

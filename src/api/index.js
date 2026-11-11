@@ -1,0 +1,141 @@
+// Serviços de API simulados.
+// Cada função devolve uma Promise e lança ApiError com o mesmo formato do
+// GlobalExceptionHandler (status, message), para trocar depois por fetch/axios
+// sem alterar as páginas.
+import { db, PROVEDORES } from './mockDb'
+
+export class ApiError extends Error {
+  constructor(status, message) {
+    super(message)
+    this.status = status
+  }
+}
+
+const delay = (ms = 250) => new Promise((r) => setTimeout(r, ms))
+const clone = (v) => JSON.parse(JSON.stringify(v))
+const NUMERO = /^\+\d{8,15}$/
+
+async function resposta(valor) {
+  await delay()
+  return clone(valor)
+}
+
+// ---------- Canais ----------
+export const canaisApi = {
+  listar: ({ status } = {}) =>
+    resposta(status ? db.canais.filter((c) => c.statusCanal === status) : db.canais),
+
+  async criar(dados) {
+    await delay()
+    const nome = (dados.nome || '').trim().toUpperCase()
+    const provedor = (dados.provedor || '').trim().toUpperCase()
+    if (!nome) throw new ApiError(400, 'O nome é obrigatório')
+    if (!provedor) throw new ApiError(400, 'O provedor é obrigatório')
+    if (!PROVEDORES.includes(provedor)) throw new ApiError(400, `Provedor não suportado: ${provedor}`)
+    if (db.canais.some((c) => c.nome === nome)) throw new ApiError(409, `Já existe um canal com o nome: ${nome}`)
+    const canal = { id: ++db.seq.canal, nome, provedor, statusCanal: dados.statusCanal || 'ATIVO' }
+    db.canais.push(canal)
+    return clone(canal)
+  },
+
+  async atualizar(id, dados) {
+    await delay()
+    const canal = db.canais.find((c) => c.id === id)
+    if (!canal) throw new ApiError(404, `Canal não encontrado: ${id}`)
+    const nome = (dados.nome ?? canal.nome).trim().toUpperCase()
+    const provedor = (dados.provedor ?? canal.provedor).trim().toUpperCase()
+    if (!PROVEDORES.includes(provedor)) throw new ApiError(400, `Provedor não suportado: ${provedor}`)
+    if (db.canais.some((c) => c.nome === nome && c.id !== id)) throw new ApiError(409, `Já existe um canal com o nome: ${nome}`)
+    Object.assign(canal, { nome, provedor, statusCanal: dados.statusCanal ?? canal.statusCanal })
+    return clone(canal)
+  },
+
+  async excluir(id) {
+    await delay()
+    const i = db.canais.findIndex((c) => c.id === id)
+    if (i < 0) throw new ApiError(404, `Canal não encontrado: ${id}`)
+    if (db.rotas.some((r) => r.canalId === id)) throw new ApiError(409, 'Não é possível excluir um canal que possui rotas')
+    db.canais.splice(i, 1)
+  },
+}
+
+// ---------- Rotas ----------
+export const rotasApi = {
+  listar: () => resposta(db.rotas),
+
+  async criar(dados) {
+    await delay()
+    if (!NUMERO.test(dados.numeroOrigem || '')) throw new ApiError(400, 'Número de origem inválido (use + e dígitos, sem espaços)')
+    if (!NUMERO.test(dados.numeroDestino || '')) throw new ApiError(400, 'Número de destino inválido (use + e dígitos, sem espaços)')
+    if (!db.canais.some((c) => c.id === Number(dados.canalId))) throw new ApiError(404, 'Canal não encontrado')
+    const statusRota = dados.statusRota || 'ATIVA'
+    if (statusRota === 'ATIVA' && db.rotas.some((r) => r.numeroOrigem === dados.numeroOrigem && r.statusRota === 'ATIVA'))
+      throw new ApiError(409, 'Já existe uma rota ativa com este número de origem')
+    const rota = {
+      id: ++db.seq.rota,
+      numeroOrigem: dados.numeroOrigem,
+      numeroDestino: dados.numeroDestino,
+      statusRota,
+      criadoEm: new Date().toISOString().slice(0, 19),
+      canalId: Number(dados.canalId),
+    }
+    db.rotas.push(rota)
+    return clone(rota)
+  },
+
+  async atualizar(id, dados) {
+    await delay()
+    const rota = db.rotas.find((r) => r.id === id)
+    if (!rota) throw new ApiError(404, `Rota não encontrada: ${id}`)
+    const novo = { ...rota, ...dados, canalId: Number(dados.canalId ?? rota.canalId) }
+    if (!NUMERO.test(novo.numeroOrigem) || !NUMERO.test(novo.numeroDestino))
+      throw new ApiError(400, 'Número inválido (use + e dígitos, sem espaços)')
+    if (novo.statusRota === 'ATIVA' && db.rotas.some((r) => r.id !== id && r.numeroOrigem === novo.numeroOrigem && r.statusRota === 'ATIVA'))
+      throw new ApiError(409, 'Já existe uma rota ativa com este número de origem')
+    Object.assign(rota, novo)
+    return clone(rota)
+  },
+
+  async excluir(id) {
+    await delay()
+    const i = db.rotas.findIndex((r) => r.id === id)
+    if (i < 0) throw new ApiError(404, `Rota não encontrada: ${id}`)
+    db.rotas.splice(i, 1)
+  },
+}
+
+// ---------- Mensagens e reencaminhamentos (consulta) ----------
+export const mensagensApi = {
+  listar: () => resposta([...db.mensagens].sort((a, b) => b.id - a.id)),
+}
+
+export const reencaminhamentosApi = {
+  listar: ({ status } = {}) =>
+    resposta(
+      [...db.reencaminhamentos]
+        .filter((r) => !status || r.statusEnvio === status)
+        .sort((a, b) => b.id - a.id),
+    ),
+}
+
+export const anexosApi = {
+  listarPorMensagem: (mensagemId) => resposta(db.anexos.filter((a) => a.mensagemId === mensagemId)),
+}
+
+// Texto que o dispatcher envia ao Número B (secção 7.2)
+export const formatarTexto = (remetente, texto) => `[Mensagem de ${remetente}]: ${texto}`
+
+// ---------- Autenticação (simulada) ----------
+// O back-end ainda não tem login (secção 12 da documentação, ponto 11).
+// Credenciais de demonstração: admin / admin123. Trocar por POST /api/auth/login.
+export const authApi = {
+  async entrar({ usuario, senha }) {
+    await delay(600)
+    if (usuario !== 'admin' || senha !== 'admin123') {
+      throw new ApiError(401, 'Utilizador ou palavra-passe incorretos.')
+    }
+    return { usuario, token: 'token-de-demonstracao' }
+  },
+}
+
+export { PROVEDORES }
