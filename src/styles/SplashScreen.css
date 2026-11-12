@@ -1,73 +1,143 @@
-/* Tela de carregamento — usada por SplashScreen.jsx */
-
 .splash {
   position: fixed;
   inset: 0;
   z-index: 100;
+  isolation: isolate;
+  overflow: hidden;
+
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 22px;
-  background: #f9faf5; /* igual ao fundo do logo */
-  transition: opacity 0.45s ease, transform 0.45s ease;
+  gap: 26px;
+
+  background:
+    radial-gradient(ellipse at 50% 42%, #ffffff 0%, #f9faf5 56%, #f1f5f8 100%);
+  transition:
+    opacity 0.45s ease,
+    transform 0.45s ease;
+}
+
+/* Luzes decorativas ao fundo */
+.splash::before,
+.splash::after {
+  position: absolute;
+  z-index: -1;
+  content: "";
+  pointer-events: none;
+  border-radius: 50%;
+  filter: blur(2px);
+}
+
+.splash::before {
+  top: 12%;
+  left: 50%;
+  width: min(520px, 110vw);
+  aspect-ratio: 1;
+  transform: translateX(-50%);
+  background: radial-gradient(circle, rgb(104 166 232 / 12%), transparent 68%);
+}
+
+.splash::after {
+  right: -120px;
+  bottom: -180px;
+  width: 420px;
+  aspect-ratio: 1;
+  background: radial-gradient(circle, rgb(79 214 234 / 11%), transparent 70%);
 }
 
 .splash-saindo {
   opacity: 0;
-  transform: scale(1.03);
+  transform: scale(1.025);
   pointer-events: none;
 }
 
 .splash-logo {
-  width: min(300px, 62vw);
+  display: block;
+  width: min(310px, 68vw);
   height: auto;
-  animation:
-    splash-entrada 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) both,
-    splash-flutuar 3s ease-in-out 0.8s infinite;
+  filter: drop-shadow(0 14px 28px rgb(42 69 98 / 10%));
+  animation: splash-entrada 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 
 .splash-barra {
-  width: min(180px, 46vw);
-  height: 4px;
-  border-radius: 999px;
-  background: #dfe8f3;
+  position: relative;
+  width: min(190px, 48vw);
+  height: 5px;
   overflow: hidden;
+  border-radius: 999px;
+  background: #e4ebf2;
+  box-shadow: 0 2px 8px rgb(42 69 98 / 7%);
 }
 
 .splash-barra span {
   display: block;
+  width: 42%;
   height: 100%;
-  width: 40%;
-  border-radius: 999px;
+  border-radius: inherit;
   background: linear-gradient(90deg, #4a8be0, #4fd6ea);
-  animation: splash-barra 1.2s ease-in-out infinite;
+  box-shadow: 0 0 12px rgb(79 174 226 / 35%);
+  animation: splash-barra 1.25s ease-in-out infinite;
 }
 
 .splash-texto {
-  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: -12px 0 0;
+  color: #647286;
   font-size: 13px;
-  letter-spacing: 0.08em;
-  color: #6b7686;
+  font-weight: 500;
+  letter-spacing: 0.045em;
+}
+
+.splash-texto::before {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #55b8d8;
+  box-shadow: 0 0 0 4px rgb(85 184 216 / 12%);
+  content: "";
+  animation: splash-pulso 1.6s ease-in-out infinite;
 }
 
 @keyframes splash-entrada {
-  from { opacity: 0; transform: translateY(14px) scale(0.94); }
-  to   { opacity: 1; transform: none; }
-}
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.97);
+  }
 
-@keyframes splash-flutuar {
-  0%, 100% { transform: translateY(0); }
-  50%      { transform: translateY(-6px); }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 @keyframes splash-barra {
-  0%   { transform: translateX(-100%); }
-  100% { transform: translateX(350%); }
+  from {
+    transform: translateX(-110%);
+  }
+
+  to {
+    transform: translateX(250%);
+  }
+}
+
+@keyframes splash-pulso {
+  50% {
+    box-shadow: 0 0 0 7px rgb(85 184 216 / 5%);
+    opacity: 0.65;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .splash-logo,
-  .splash-barra span { animation: none; }
-  .splash { transition: opacity 0.2s ease; }
+  .splash-barra span,
+  .splash-texto::before {
+    animation: none;
+  }
+
+  .splash {
+    transition: opacity 0.2s ease;
+  }
 }
