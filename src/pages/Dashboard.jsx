@@ -105,7 +105,7 @@ export default function Dashboard() {
   }
 
   const itensMenu = [
-    { rotulo: 'Minhas redes', descricao: 'Canais e provedores', acao: () => navigate('/canais') },
+    { rotulo: 'Minhas redes', descricao: '', acao: () => navigate('/minhas-redes') },
     { rotulo: 'Rotas', descricao: 'Número A → Número B', acao: () => navigate('/rotas') },
     { rotulo: 'Mensagens', descricao: 'Mensagens recebidas', acao: () => navigate('/mensagens') },
     { rotulo: 'Reencaminhamentos', descricao: 'Estado dos envios', acao: () => navigate('/reencaminhamentos') },
