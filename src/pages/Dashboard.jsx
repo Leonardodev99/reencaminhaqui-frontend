@@ -1,14 +1,120 @@
-import { Link } from 'react-router-dom'
-import { canaisApi, mensagensApi, reencaminhamentosApi, rotasApi } from '../api'
+import { useEffect, useRef, useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { canaisApi, mensagensApi, perfilApi, reencaminhamentosApi, rotasApi } from '../api'
 import { Badge, PageHead, formatarData, useCarregar } from '../components/ui.jsx'
-//import reencaminhamentos from './Reencaminhamentos.jsx'
 import '../styles/Dashboard.css'
 
+/**
+ * Menu hambúrguer do painel.
+ * Fecha ao clicar fora, ao carregar em Esc ou ao escolher uma opção.
+ */
+function MenuHamburguer({ nome, itens }) {
+  const [aberto, setAberto] = useState(false)
+  const raiz = useRef(null)
+  const botao = useRef(null)
+
+  useEffect(() => {
+    if (!aberto) return
+    const aoClicar = (e) => !raiz.current?.contains(e.target) && setAberto(false)
+    const aoTeclar = (e) => {
+      if (e.key === 'Escape') {
+        setAberto(false)
+        botao.current?.focus()
+      }
+    }
+    document.addEventListener('mousedown', aoClicar)
+    document.addEventListener('keydown', aoTeclar)
+    return () => {
+      document.removeEventListener('mousedown', aoClicar)
+      document.removeEventListener('keydown', aoTeclar)
+    }
+  }, [aberto])
+
+  const escolher = (item) => {
+    setAberto(false)
+    item.acao()
+  }
+
+  return (
+    <div className="dash-menu" ref={raiz}>
+      <button
+        ref={botao}
+        type="button"
+        className={`dash-menu-botao${aberto ? ' dash-menu-botao-aberto' : ''}`}
+        onClick={() => setAberto((v) => !v)}
+        aria-label="Abrir menu"
+        aria-haspopup="menu"
+        aria-expanded={aberto}
+      >
+        <span className="dash-menu-barras" aria-hidden="true">
+          <span />
+          <span />
+          <span />
+        </span>
+      </button>
+
+      {aberto && (
+        <div className="dash-menu-lista" role="menu">
+          <div className="dash-menu-cabecalho">
+            <span className="dash-menu-conta">Conta</span>
+            <strong>{nome ?? '…'}</strong>
+          </div>
+
+          {itens.map((item, i) =>
+            item.separador ? (
+              <hr key={`sep-${i}`} className="dash-menu-sep" />
+            ) : (
+              <button
+                key={item.rotulo}
+                type="button"
+                role="menuitem"
+                className={`dash-menu-item${item.perigo ? ' dash-menu-item-perigo' : ''}`}
+                onClick={() => escolher(item)}
+              >
+                <span className="dash-menu-item-rotulo">{item.rotulo}</span>
+                {item.descricao && <span className="dash-menu-item-desc">{item.descricao}</span>}
+              </button>
+            ),
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
+
 export default function Dashboard() {
+  const navigate = useNavigate()
   const canais = useCarregar(() => canaisApi.listar(), [])
   const rotas = useCarregar(() => rotasApi.listar(), [])
   const msgs = useCarregar(() => mensagensApi.listar(), [])
   const reenv = useCarregar(() => reencaminhamentosApi.listar(), [])
+  const perfil = useCarregar(() => perfilApi.obter(), [])
+
+  const atualizando = canais.carregando || rotas.carregando || msgs.carregando || reenv.carregando
+
+  const atualizarTudo = () => {
+    canais.recarregar()
+    rotas.recarregar()
+    msgs.recarregar()
+    reenv.recarregar()
+  }
+
+  const sair = () => {
+    // Quando houver back-end: invalidar o token / sessão aqui.
+    navigate('/login', { replace: true })
+  }
+
+  const itensMenu = [
+    { rotulo: 'Minhas redes', descricao: 'Canais e provedores', acao: () => navigate('/canais') },
+    { rotulo: 'Rotas', descricao: 'Número A → Número B', acao: () => navigate('/rotas') },
+    { rotulo: 'Mensagens', descricao: 'Mensagens recebidas', acao: () => navigate('/mensagens') },
+    { rotulo: 'Reencaminhamentos', descricao: 'Estado dos envios', acao: () => navigate('/reencaminhamentos') },
+    { separador: true },
+    { rotulo: atualizando ? 'A atualizar…' : 'Atualizar painel', descricao: 'Recarregar os números', acao: atualizarTudo },
+    { rotulo: 'Perfil', descricao: 'Dados da conta e palavra-passe', acao: () => navigate('/perfil') },
+    { separador: true },
+    { rotulo: 'Sair', perigo: true, acao: sair },
+  ]
 
   const conta = (lista, fn) => (lista ? lista.filter(fn).length : null)
   const mostrar = (n) => (n === null ? '…' : n)
@@ -33,7 +139,9 @@ export default function Dashboard() {
 
   return (
     <>
-      <PageHead titulo="Painel" descricao="Visão geral do reencaminhamento de mensagens." />
+      <PageHead titulo="Painel" descricao="Visão geral do reencaminhamento de mensagens.">
+        <MenuHamburguer nome={perfil.dados?.nome} itens={itensMenu} />
+      </PageHead>
 
       <section className="dash-stats" aria-label="Resumo">
         {stats.map((s) => (

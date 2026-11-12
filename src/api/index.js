@@ -2,7 +2,7 @@
 // Cada função devolve uma Promise e lança ApiError com o mesmo formato do
 // GlobalExceptionHandler (status, message), para trocar depois por fetch/axios
 // sem alterar as páginas.
-import { db, PROVEDORES } from './mockDb'
+import { db, perfilDb, PROVEDORES } from './mockDb'
 
 export class ApiError extends Error {
   constructor(status, message) {
@@ -131,10 +131,39 @@ export const formatarTexto = (remetente, texto) => `[Mensagem de ${remetente}]: 
 export const authApi = {
   async entrar({ usuario, senha }) {
     await delay(600)
-    if (usuario !== 'admin' || senha !== 'admin123') {
+    if (usuario !== perfilDb.usuario || senha !== perfilDb.senha) {
       throw new ApiError(401, 'Utilizador ou palavra-passe incorretos.')
     }
     return { usuario, token: 'token-de-demonstracao' }
+  },
+}
+
+// ---------- Perfil (simulado) ----------
+// Trocar por GET/PUT /api/perfil e PUT /api/perfil/senha quando existirem.
+const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+const semSenha = ({  ...perfil }) => perfil
+
+export const perfilApi = {
+  async obter() {
+    await delay()
+    return clone(semSenha(perfilDb))
+  },
+
+  async atualizar({ nome, email }) {
+    await delay()
+    if (!nome?.trim()) throw new ApiError(400, 'O nome é obrigatório')
+    if (!EMAIL.test((email || '').trim())) throw new ApiError(400, 'E-mail inválido')
+    perfilDb.nome = nome.trim()
+    perfilDb.email = email.trim()
+    return clone(semSenha(perfilDb))
+  },
+
+  async alterarSenha({ atual, nova }) {
+    await delay(500)
+    if (atual !== perfilDb.senha) throw new ApiError(400, 'A palavra-passe atual está incorreta.')
+    if (!nova || nova.length < 8) throw new ApiError(400, 'A nova palavra-passe deve ter pelo menos 8 caracteres.')
+    if (nova === atual) throw new ApiError(400, 'A nova palavra-passe deve ser diferente da atual.')
+    perfilDb.senha = nova
   },
 }
 

@@ -4,6 +4,7 @@ import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Reencaminhamentos from './pages/Reencaminhamentos';
 import Mensagens from './pages/Mensagens';
+import Perfil from './pages/Perfil';
 
 
 function App() {
@@ -15,6 +16,7 @@ function App() {
         <Route path="/Dashboard" element={<Dashboard />} />
         <Route path="/reencaminhamentos" element={<Reencaminhamentos />} />
         <Route path="/mensagens" element={<Mensagens />} />
+        <Route path="/perfil" element={<Perfil />} />
       
       </Routes>
     </BrowserRouter>

@@ -43,5 +43,15 @@ export const db = {
   ],
 }
 
+// Conta do utilizador autenticado (simulada; o back-end ainda não tem login).
+export const perfilDb = {
+  usuario: 'admin',
+  senha: 'admin123',
+  nome: 'Leonardo Tiago',
+  email: 'admin@reencaminhaqui.local',
+  funcao: 'ADMIN',
+  criadoEm: agora(60 * 24 * 30),
+}
+
 // Provedores aceites (equivale ao ProvedorRegistry do back-end)
 export const PROVEDORES = ['SIMULADO', 'TWILIO', 'ZAPI', 'META']
