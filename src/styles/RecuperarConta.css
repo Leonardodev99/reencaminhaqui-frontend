@@ -1,0 +1,235 @@
+/* Estilos da página de recuperação de conta (RecuperarConta.jsx) */
+
+.recup {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  background:
+    radial-gradient(900px 500px at 10% -10%, rgba(74, 139, 224, 0.16), transparent 60%),
+    radial-gradient(800px 500px at 95% 110%, rgba(79, 214, 234, 0.18), transparent 60%),
+    #f9faf5; /* igual ao fundo do logo */
+}
+
+.recup-card {
+  width: 100%;
+  max-width: 420px;
+  background: #fff;
+  border: 1px solid #e2e6ec;
+  border-radius: 16px;
+  padding: 28px 28px 22px;
+  box-shadow: 0 10px 40px rgba(28, 36, 48, 0.08);
+  text-align: center;
+}
+
+.recup-logo {
+  width: 120px;
+  height: auto;
+  margin: 0 auto 4px;
+  display: block;
+}
+
+.recup-titulo {
+  font-size: 22px;
+  margin: 8px 0 18px;
+}
+
+/* Indicador de passos */
+.recup-passos {
+  list-style: none;
+  margin: 0 0 20px;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+
+.recup-passo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  position: relative;
+  font-size: 12px;
+  color: #6b7686;
+}
+
+/* Linha entre os passos */
+.recup-passo:not(:first-child)::before {
+  content: '';
+  position: absolute;
+  top: 13px;
+  right: 50%;
+  width: 100%;
+  height: 2px;
+  background: #e2e6ec;
+  z-index: 0;
+}
+
+.recup-passo-feito:not(:first-child)::before,
+.recup-passo-atual:not(:first-child)::before { background: #4a8be0; }
+
+.recup-passo-num {
+  position: relative;
+  z-index: 1;
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #eceff3;
+  color: #6b7686;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.recup-passo-atual .recup-passo-num { background: #3a74c4; color: #fff; }
+.recup-passo-feito .recup-passo-num { background: #15803d; color: #fff; }
+.recup-passo-atual .recup-passo-nome { color: #1c2430; font-weight: 600; }
+
+/* Formulário */
+.recup-form { text-align: left; }
+
+.recup-texto {
+  margin: 0 0 16px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #3a4556;
+}
+
+.recup-campo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.recup-campo label { font-size: 13px; font-weight: 600; }
+
+.recup-campo input {
+  width: 100%;
+  font: inherit;
+  padding: 10px 12px;
+  border: 1px solid #e2e6ec;
+  border-radius: 10px;
+  background: #fff;
+  color: #1c2430;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.recup-campo input:focus {
+  outline: none;
+  border-color: #4a8be0;
+  box-shadow: 0 0 0 3px rgba(74, 139, 224, 0.2);
+}
+
+.recup-campo input:disabled { background: #f4f6f9; cursor: not-allowed; }
+
+.recup-campo .recup-codigo {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 24px;
+  letter-spacing: 0.4em;
+  text-align: center;
+  padding-left: 0.4em;
+}
+
+.recup-dica { font-size: 12px; color: #6b7686; }
+
+.recup-senha { position: relative; }
+.recup-senha input { padding-right: 84px; }
+
+.recup-olho {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%);
+  border: 0;
+  background: none;
+  padding: 6px 8px;
+  border-radius: 6px;
+  font: inherit;
+  font-size: 13px;
+  color: #3a74c4;
+  cursor: pointer;
+}
+
+.recup-olho:hover { background: #eef4fc; }
+
+.recup-botao {
+  width: 100%;
+  padding: 12px 16px;
+  border: 0;
+  border-radius: 10px;
+  font: inherit;
+  font-weight: 600;
+  color: #fff;
+  background: linear-gradient(135deg, #4a8be0, #3fbfd9);
+  cursor: pointer;
+  transition: filter 0.15s, transform 0.05s;
+}
+
+.recup-botao:hover:not(:disabled) { filter: brightness(1.06); }
+.recup-botao:active:not(:disabled) { transform: translateY(1px); }
+.recup-botao:disabled { opacity: 0.7; cursor: not-allowed; }
+
+.recup-linha {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.recup-link {
+  border: 0;
+  background: none;
+  padding: 4px 0;
+  font: inherit;
+  font-size: 13px;
+  color: #3a74c4;
+  cursor: pointer;
+}
+
+.recup-link:hover:not(:disabled) { text-decoration: underline; }
+.recup-link:disabled { color: #6b7686; cursor: not-allowed; }
+
+/* Avisos */
+.recup-alerta {
+  margin-bottom: 14px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  text-align: left;
+}
+
+.recup-alerta-erro { background: #fee2e2; color: #b91c1c; }
+.recup-alerta-ok { background: #dcfce7; color: #15803d; }
+
+.recup-demo {
+  margin: 16px 0 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #6b7686;
+}
+
+.recup-demo code {
+  background: #eceff3;
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.recup-alt {
+  margin: 18px 0 0;
+  font-size: 14px;
+  color: #6b7686;
+}
+
+.recup-alt a { color: #3a74c4; font-weight: 600; text-decoration: none; }
+.recup-alt a:hover { text-decoration: underline; }
+
+@media (max-width: 420px) {
+  .recup-card { padding: 24px 18px 18px; border-radius: 14px; }
+  .recup-passo-nome { font-size: 11px; }
+}

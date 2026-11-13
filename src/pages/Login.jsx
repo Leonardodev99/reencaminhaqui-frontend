@@ -42,9 +42,11 @@ export default function Login() {
         <p className="login-sub">Aceda ao painel de reencaminhamento de mensagens.</p>
 
         <form className="login-form" onSubmit={entrar} noValidate>
-          {state?.contaCriada && !erro && (
+          {(state?.contaCriada || state?.senhaRedefinida) && !erro && (
             <div className="login-sucesso" role="status">
-              Conta criada com sucesso. Inicie sessão para continuar.
+              {state.senhaRedefinida
+                ? 'Palavra-passe redefinida. Inicie sessão com a nova palavra-passe.'
+                : 'Conta criada com sucesso. Inicie sessão para continuar.'}
             </div>
           )}
 
@@ -90,6 +92,9 @@ export default function Login() {
                 {mostrarSenha ? 'Ocultar' : 'Mostrar'}
               </button>
             </div>
+            <Link className="login-esqueci" to="/recuperar-conta">
+              Esqueceu a palavra-passe?
+            </Link>
           </div>
 
           <button type="submit" className="login-botao" disabled={entrando}>

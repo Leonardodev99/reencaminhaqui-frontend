@@ -1,7 +1,7 @@
 // Serviços de API simulados.
 // Cada função devolve uma Promise e lança ApiError com o mesmo formato do
 // GlobalExceptionHandler (status, message), para trocar depois por fetch/axios
-
+// sem alterar as páginas.
 import { db, perfilDb, PROVEDORES } from './mockDb'
 
 export class ApiError extends Error {
@@ -126,7 +126,7 @@ export const anexosApi = {
 export const formatarTexto = (remetente, texto) => `[Mensagem de ${remetente}]: ${texto}`
 
 // ---------- Autenticação (simulada) ----------
-// O back-end ainda não tem login (secção 12 da documentação, ponto 11).
+
 // Credenciais de demonstração: admin / admin123. Trocar por POST /api/auth/login.
 const contas = [{ ...perfilDb }] // contas registadas (a primeira é a de demonstração)
 const EMAIL_VALIDO = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -136,6 +136,15 @@ const UTILIZADOR_VALIDO = /^[a-zA-Z0-9._-]{3,20}$/
 const sincronizarConta = () => {
   const conta = contas.find((c) => c.usuario === perfilDb.usuario)
   if (conta) Object.assign(conta, perfilDb)
+}
+
+const CODIGO_DEMO = '123456'
+
+// Valida o par e-mail + código da recuperação e devolve a conta
+const contaPorRecuperacao = (email, codigo) => {
+  const conta = contas.find((c) => c.email.toLowerCase() === (email || '').trim().toLowerCase())
+  if (!conta || codigo !== CODIGO_DEMO) throw new ApiError(400, 'Código inválido ou expirado.')
+  return conta
 }
 
 export const authApi = {
@@ -168,6 +177,29 @@ export const authApi = {
     }
     contas.push(conta)
     return { usuario: conta.usuario }
+  },
+
+  
+  // Responde sempre com sucesso, exista ou não a conta, para não revelar quais e-mails estão registados.
+  async pedirRecuperacao({ email }) {
+    await delay(700)
+    if (!EMAIL_VALIDO.test((email || '').trim())) throw new ApiError(400, 'E-mail inválido')
+    return { enviado: true }
+  },
+
+  async verificarCodigo({ email, codigo }) {
+    await delay(500)
+    contaPorRecuperacao(email, codigo)
+    return { valido: true }
+  },
+
+  async redefinirSenha({ email, codigo, nova }) {
+    await delay(700)
+    const conta = contaPorRecuperacao(email, codigo)
+    if (!nova || nova.length < 8) throw new ApiError(400, 'A palavra-passe deve ter pelo menos 8 caracteres.')
+    conta.senha = nova
+    if (perfilDb.usuario === conta.usuario) perfilDb.senha = nova
+    return { redefinida: true }
   },
 }
 

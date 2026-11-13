@@ -314,3 +314,12 @@
   background: #dcfce7;
   color: #15803d;
 }
+/* Ligação "Esqueceu a palavra-passe?" */
+.login-esqueci {
+  align-self: flex-end;
+  font-size: 13px;
+  color: #3a74c4;
+  text-decoration: none;
+}
+
+.login-esqueci:hover { text-decoration: underline; }
