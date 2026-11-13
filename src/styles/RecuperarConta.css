@@ -1,11 +1,13 @@
-/* Recuperação de conta */
+/* ============================================================
+   Recuperação de conta — Reencaminhaqui
+   ============================================================ */
 
 .recup {
-  --recup-texto: #192b3d;
-  --recup-secundario: #6b7b8e;
-  --recup-borda: #e2e8f0;
-  --recup-azul: #3978c5;
-  --recup-ciano: #37b9cf;
+  --recup-azul: #3b82f6;
+  --recup-ciano: #22d3ee;
+  --recup-texto: #172536;
+  --recup-secundario: #5f6f83;
+  --recup-borda: #dde6f0;
 
   position: relative;
   isolation: isolate;
@@ -16,75 +18,161 @@
   justify-content: center;
   overflow: auto;
   padding: 32px 16px;
-  background:
-    radial-gradient(ellipse at 12% 8%, rgb(74 139 224 / 13%), transparent 37%),
-    radial-gradient(ellipse at 92% 92%, rgb(79 214 234 / 14%), transparent 36%),
-    #f6f8f6;
+  background: linear-gradient(160deg, #f8fbff 0%, #eef6fd 45%, #e8f7f8 100%);
   color: var(--recup-texto);
 }
 
-.recup::before,
-.recup::after {
+/* ---------- Fundo ---------- */
+
+.recup-fundo {
   position: fixed;
+  inset: 0;
   z-index: -1;
-  content: "";
+  overflow: hidden;
   pointer-events: none;
-  border: 1px solid rgb(74 139 224 / 8%);
+}
+
+.recup-aurora {
+  position: absolute;
   border-radius: 50%;
+  filter: blur(70px);
+  opacity: 0.55;
 }
 
-.recup::before {
-  top: -230px;
-  right: -180px;
-  width: 520px;
-  height: 520px;
+.recup-aurora-1 {
+  top: -18%;
+  left: -12%;
+  width: 62vmax;
+  height: 62vmax;
+  background: radial-gradient(circle, rgb(59 130 246 / 55%), transparent 65%);
+  animation: recup-deriva-1 14s ease-in-out infinite alternate;
 }
 
-.recup::after {
-  bottom: -290px;
-  left: -200px;
-  width: 620px;
-  height: 620px;
+.recup-aurora-2 {
+  right: -20%;
+  bottom: -22%;
+  width: 66vmax;
+  height: 66vmax;
+  background: radial-gradient(circle, rgb(34 211 238 / 50%), transparent 65%);
+  animation: recup-deriva-2 16s ease-in-out infinite alternate;
 }
+
+.recup-aurora-3 {
+  top: 35%;
+  left: 40%;
+  width: 40vmax;
+  height: 40vmax;
+  background: radial-gradient(circle, rgb(45 212 191 / 30%), transparent 65%);
+  animation: recup-deriva-3 12s ease-in-out infinite alternate;
+}
+
+.recup-pontos {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgb(42 69 98 / 13%) 1px, transparent 1.4px);
+  background-size: 26px 26px;
+  -webkit-mask-image: radial-gradient(ellipse at center, #000 0%, transparent 72%);
+  mask-image: radial-gradient(ellipse at center, #000 0%, transparent 72%);
+}
+
+/* ---------- Cartão ---------- */
 
 .recup-card {
-  width: min(100%, 440px);
+  position: relative;
+  width: min(100%, 460px);
   margin: auto;
-  padding: 30px 32px 24px;
-  border: 1px solid rgb(222 230 239 / 90%);
-  border-radius: 20px;
-  background: rgb(255 255 255 / 96%);
+  padding: 34px 34px 26px;
+  border: 1px solid rgb(255 255 255 / 85%);
+  border-radius: 28px;
+  background: linear-gradient(160deg, rgb(255 255 255 / 90%), rgb(255 255 255 / 68%));
   box-shadow:
-    0 24px 70px rgb(34 55 79 / 10%),
-    0 3px 12px rgb(34 55 79 / 4%);
+    0 30px 80px rgb(42 69 98 / 14%),
+    0 6px 20px rgb(59 130 246 / 8%),
+    inset 0 1px 0 #fff;
+  backdrop-filter: blur(18px) saturate(1.3);
+  -webkit-backdrop-filter: blur(18px) saturate(1.3);
   text-align: center;
-  animation: recup-entrada 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation: recup-entrada 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.recup-card::before {
+  position: absolute;
+  inset: -1px;
+  z-index: -1;
+  padding: 1px;
+  border-radius: inherit;
+  background: conic-gradient(
+    from var(--recup-angulo, 0deg),
+    transparent 0%,
+    rgb(59 130 246 / 50%) 18%,
+    rgb(34 211 238 / 65%) 30%,
+    transparent 48%
+  );
+  content: "";
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box exclude,
+    linear-gradient(#000 0 0);
+  animation: recup-gira-borda 5s linear infinite;
+}
+
+@property --recup-angulo {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
 }
 
 .recup-logo {
   display: block;
-  width: min(132px, 45%);
+  width: min(120px, 40%);
   height: auto;
-  margin: 0 auto 12px;
-  filter: drop-shadow(0 6px 12px rgb(42 69 98 / 9%));
+  margin: 0 auto 18px;
+  filter: drop-shadow(0 6px 12px rgb(42 69 98 / 10%));
+}
+
+/* Emblema do passo */
+
+.recup-emblema {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 14px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, var(--recup-azul), var(--recup-ciano));
+  box-shadow: 0 14px 30px rgb(59 130 246 / 32%);
+  color: #fff;
+  animation: recup-emblema 0.55s cubic-bezier(0.2, 0.9, 0.3, 1.3) both;
+}
+
+.recup-emblema-anel {
+  position: absolute;
+  inset: 0;
+  border: 2px solid rgb(59 130 246 / 35%);
+  border-radius: inherit;
+  animation: recup-onda 2.6s ease-out infinite;
 }
 
 .recup-titulo {
   margin: 0 0 22px;
   color: var(--recup-texto);
-  font-size: clamp(22px, 5vw, 26px);
-  font-weight: 750;
+  font-size: clamp(23px, 5vw, 27px);
+  font-weight: 800;
   letter-spacing: -0.035em;
   line-height: 1.2;
 }
 
-/* Indicador de progresso */
+/* ---------- Indicador de progresso ---------- */
 
 .recup-passos {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 6px;
-  margin: 0 0 23px;
+  margin: 0 0 24px;
   padding: 0;
   list-style: none;
 }
@@ -95,56 +183,56 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 7px;
+  gap: 8px;
   color: #8491a0;
-  font-size: 10px;
+  font-size: 11px;
   line-height: 1.3;
 }
 
 .recup-passo:not(:first-child)::before {
   position: absolute;
-  top: 14px;
+  top: 15px;
   right: 50%;
   z-index: -1;
   width: 100%;
-  height: 2px;
-  background: #e5ebf1;
+  height: 3px;
+  border-radius: 3px;
+  background: #e3eaf2;
   content: "";
 }
 
 .recup-passo-feito:not(:first-child)::before,
 .recup-passo-atual:not(:first-child)::before {
-  background: #78a8df;
+  background: linear-gradient(90deg, var(--recup-azul), var(--recup-ciano));
 }
 
 .recup-passo-num {
   display: inline-flex;
-  width: 29px;
-  height: 29px;
+  width: 32px;
+  height: 32px;
   align-items: center;
   justify-content: center;
-  border: 2px solid #fff;
+  border: 3px solid #f4f8fc;
   border-radius: 50%;
-  background: #edf1f5;
-  box-shadow: 0 0 0 1px #e1e7ee;
+  background: #e9eff5;
   color: #748397;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 750;
   transition:
-    background-color 0.18s ease,
-    box-shadow 0.18s ease,
-    color 0.18s ease;
+    background 0.25s ease,
+    box-shadow 0.25s ease,
+    color 0.25s ease;
 }
 
 .recup-passo-atual .recup-passo-num {
-  background: var(--recup-azul);
-  box-shadow: 0 0 0 1px var(--recup-azul), 0 3px 9px rgb(57 120 197 / 25%);
+  background: linear-gradient(135deg, var(--recup-azul), var(--recup-ciano));
+  box-shadow: 0 0 0 4px rgb(59 130 246 / 15%), 0 6px 14px rgb(59 130 246 / 30%);
   color: #fff;
 }
 
 .recup-passo-feito .recup-passo-num {
-  background: #18845b;
-  box-shadow: 0 0 0 1px #18845b;
+  background: #16a37a;
+  box-shadow: 0 4px 10px rgb(22 163 122 / 28%);
   color: #fff;
 }
 
@@ -154,25 +242,26 @@
 }
 
 .recup-passo-feito .recup-passo-nome {
-  color: #53667b;
+  color: #4f6479;
   font-weight: 600;
 }
 
-/* Formulário */
+/* ---------- Formulário ---------- */
 
 .recup-form {
   text-align: left;
+  animation: recup-passo-entra 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 
 .recup-texto {
-  margin: 0 0 18px;
-  color: #53667b;
-  font-size: 12px;
-  line-height: 1.65;
+  margin: 0 0 20px;
+  color: var(--recup-secundario);
+  font-size: 14px;
+  line-height: 1.6;
 }
 
 .recup-texto strong {
-  color: #34485c;
+  color: #2f4157;
   font-weight: 700;
   overflow-wrap: anywhere;
 }
@@ -180,101 +269,147 @@
 .recup-campo {
   display: flex;
   flex-direction: column;
-  gap: 7px;
-  margin-bottom: 17px;
+  gap: 8px;
+  margin-bottom: 18px;
 }
 
-.recup-campo label {
-  color: #34485c;
-  font-size: 12px;
+.recup-campo label,
+.recup-rotulo {
+  color: #2f4157;
+  font-size: 13px;
   font-weight: 650;
 }
 
-.recup-campo input {
-  box-sizing: border-box;
-  width: 100%;
-  min-height: 44px;
-  padding: 10px 12px;
-  border: 1px solid var(--recup-borda);
-  border-radius: 9px;
-  outline: none;
-  background: #fbfcfe;
-  color: var(--recup-texto);
-  font: inherit;
-  font-size: 13px;
-  transition:
-    border-color 0.16s ease,
-    background-color 0.16s ease,
-    box-shadow 0.16s ease;
-}
-
-.recup-campo input::placeholder {
-  color: #9aa7b5;
-}
-
-.recup-campo input:hover:not(:disabled) {
-  border-color: #cbd6e3;
-  background: #fff;
-}
-
-.recup-campo input:focus-visible {
-  border-color: var(--recup-azul);
-  background: #fff;
-  box-shadow: 0 0 0 4px rgb(57 120 197 / 13%);
-}
-
-.recup-campo input:disabled {
-  background: #f1f4f7;
-  color: #8391a0;
-  cursor: not-allowed;
-}
-
-.recup-campo .recup-codigo {
-  min-height: 54px;
-  padding: 10px 0 10px 0.4em;
-  border-color: #d7e2ee;
-  background: #f9fbfd;
-  color: #263d56;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  font-size: 25px;
-  font-variant-numeric: tabular-nums;
-  font-weight: 700;
-  letter-spacing: 0.4em;
-  text-align: center;
-}
-
-.recup-campo .recup-codigo:focus-visible {
-  background: #fff;
-}
-
-.recup-dica {
-  color: var(--recup-secundario);
-  font-size: 10px;
-  line-height: 1.5;
-}
-
-/* Mostrar/ocultar palavra-passe */
-
-.recup-senha {
+.recup-entrada {
   position: relative;
 }
 
+.recup-entrada-icone {
+  position: absolute;
+  top: 50%;
+  left: 14px;
+  display: grid;
+  transform: translateY(-50%);
+  color: #94a3b8;
+  pointer-events: none;
+  transition: color 0.18s ease;
+}
+
+.recup-entrada:focus-within .recup-entrada-icone {
+  color: var(--recup-azul);
+}
+
+.recup-entrada input {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 50px;
+  padding: 11px 14px 11px 44px;
+  border: 1.5px solid var(--recup-borda);
+  border-radius: 14px;
+  outline: none;
+  background: rgb(255 255 255 / 85%);
+  color: var(--recup-texto);
+  font: inherit;
+  font-size: 14.5px;
+  transition:
+    border-color 0.18s ease,
+    background-color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.recup-entrada input::placeholder {
+  color: #a3aebd;
+}
+
+.recup-entrada input:hover:not(:disabled) {
+  border-color: #c3d2e3;
+  background: #fff;
+}
+
+.recup-entrada input:focus-visible {
+  border-color: var(--recup-azul);
+  background: #fff;
+  box-shadow: 0 0 0 4px rgb(59 130 246 / 15%);
+}
+
+.recup-entrada input:disabled {
+  background: #f2f5f8;
+  color: #8995a4;
+  cursor: not-allowed;
+}
+
+/* Código em 6 caixas */
+
+.recup-otp {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.recup-otp-caixa {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  aspect-ratio: 1 / 1.2;
+  padding: 0;
+  border: 1.5px solid var(--recup-borda);
+  border-radius: 14px;
+  outline: none;
+  background: rgb(255 255 255 / 85%);
+  color: #1e3a5f;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: clamp(20px, 6vw, 26px);
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  text-align: center;
+  caret-color: var(--recup-azul);
+  transition:
+    border-color 0.16s ease,
+    box-shadow 0.16s ease,
+    transform 0.16s ease,
+    background-color 0.16s ease;
+}
+
+.recup-otp-caixa:hover:not(:disabled) {
+  border-color: #c3d2e3;
+  background: #fff;
+}
+
+.recup-otp-caixa:focus-visible {
+  border-color: var(--recup-azul);
+  background: #fff;
+  box-shadow: 0 0 0 4px rgb(59 130 246 / 16%);
+  transform: translateY(-2px);
+}
+
+.recup-otp-cheia {
+  border-color: rgb(59 130 246 / 55%);
+  background: #f2f8ff;
+}
+
+.recup-otp-caixa:disabled {
+  background: #f2f5f8;
+  cursor: not-allowed;
+}
+
+/* Mostrar/ocultar */
+
 .recup-senha input {
-  padding-right: 88px;
+  padding-right: 92px;
 }
 
 .recup-olho {
   position: absolute;
   top: 50%;
-  right: 7px;
+  right: 8px;
   transform: translateY(-50%);
-  padding: 7px 9px;
+  padding: 7px 10px;
   border: 0;
-  border-radius: 7px;
+  border-radius: 9px;
   background: transparent;
-  color: #3972b2;
+  color: #3974bd;
   font: inherit;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 650;
   cursor: pointer;
   transition:
@@ -288,88 +423,174 @@
 }
 
 .recup-olho:focus-visible {
-  outline: 3px solid rgb(57 120 197 / 24%);
+  outline: 3px solid rgb(59 130 246 / 25%);
   outline-offset: 2px;
 }
 
-/* Ação principal */
+/* Força da palavra-passe */
+
+.recup-forca {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  --cor: #cbd5e1;
+}
+
+.recup-forca[data-nivel="1"] {
+  --cor: #ef4444;
+}
+
+.recup-forca[data-nivel="2"] {
+  --cor: #f59e0b;
+}
+
+.recup-forca[data-nivel="3"] {
+  --cor: #22b8cf;
+}
+
+.recup-forca[data-nivel="4"] {
+  --cor: #16a37a;
+}
+
+.recup-forca-barras {
+  display: grid;
+  flex: 1;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 5px;
+}
+
+.recup-forca-barras span {
+  height: 5px;
+  border-radius: 99px;
+  background: #e3eaf2;
+  transition: background-color 0.25s ease;
+}
+
+.recup-forca[data-nivel="1"] .recup-forca-barras span:nth-child(-n + 1),
+.recup-forca[data-nivel="2"] .recup-forca-barras span:nth-child(-n + 2),
+.recup-forca[data-nivel="3"] .recup-forca-barras span:nth-child(-n + 3),
+.recup-forca[data-nivel="4"] .recup-forca-barras span:nth-child(-n + 4) {
+  background: var(--cor);
+}
+
+.recup-forca-texto {
+  min-width: 120px;
+  color: var(--recup-secundario);
+  font-size: 12px;
+  text-align: right;
+}
+
+.recup-forca:not([data-nivel="0"]) .recup-forca-texto {
+  color: var(--cor);
+  font-weight: 650;
+}
+
+/* ---------- Botão principal ---------- */
 
 .recup-botao {
+  position: relative;
   display: flex;
   width: 100%;
-  min-height: 46px;
+  min-height: 52px;
   align-items: center;
   justify-content: center;
-  padding: 11px 16px;
+  gap: 9px;
+  padding: 12px 16px;
+  overflow: hidden;
   border: 0;
-  border-radius: 10px;
+  border-radius: 14px;
   background: linear-gradient(110deg, var(--recup-azul), var(--recup-ciano));
-  box-shadow: 0 6px 15px rgb(57 120 197 / 20%);
+  box-shadow: 0 10px 24px rgb(59 130 246 / 30%);
   color: #fff;
   font: inherit;
-  font-size: 12px;
+  font-size: 15px;
   font-weight: 700;
   cursor: pointer;
   transition:
-    box-shadow 0.16s ease,
-    filter 0.16s ease,
-    transform 0.16s ease;
+    box-shadow 0.18s ease,
+    filter 0.18s ease,
+    transform 0.18s ease;
+}
+
+.recup-botao::after {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(100deg, transparent 30%, rgb(255 255 255 / 35%) 50%, transparent 70%);
+  content: "";
+  transform: translateX(-120%);
 }
 
 .recup-botao:hover:not(:disabled) {
-  transform: translateY(-1px);
-  filter: saturate(1.08) brightness(1.03);
-  box-shadow: 0 9px 19px rgb(57 120 197 / 26%);
+  transform: translateY(-2px);
+  filter: saturate(1.1) brightness(1.03);
+  box-shadow: 0 14px 28px rgb(59 130 246 / 36%);
+}
+
+.recup-botao:hover:not(:disabled)::after {
+  transform: translateX(120%);
+  transition: transform 0.7s ease;
 }
 
 .recup-botao:active:not(:disabled) {
   transform: translateY(0);
+  box-shadow: 0 6px 14px rgb(59 130 246 / 24%);
 }
 
 .recup-botao:focus-visible {
-  outline: none;
-  box-shadow:
-    0 0 0 4px rgb(57 120 197 / 18%),
-    0 6px 15px rgb(57 120 197 / 20%);
+  outline: 3px solid rgb(59 130 246 / 30%);
+  outline-offset: 3px;
 }
 
 .recup-botao:disabled {
   box-shadow: none;
-  opacity: 0.62;
+  opacity: 0.75;
   cursor: not-allowed;
 }
 
-/* Alterar e-mail e reenviar código */
+.recup-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgb(255 255 255 / 40%);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: recup-gira 0.7s linear infinite;
+}
+
+/* Alterar e-mail / reenviar */
 
 .recup-linha {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
   gap: 8px 14px;
-  margin-top: 12px;
+  margin-top: 14px;
 }
 
 .recup-link {
-  padding: 5px 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 8px;
+  margin: 0 -8px;
   border: 0;
-  border-radius: 4px;
+  border-radius: 8px;
   background: transparent;
-  color: var(--recup-azul);
+  color: #3a74c4;
   font: inherit;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 650;
   cursor: pointer;
+  transition: background-color 0.15s ease;
 }
 
 .recup-link:hover:not(:disabled) {
+  background: #edf4fc;
   color: #285d9e;
-  text-decoration: underline;
-  text-underline-offset: 3px;
 }
 
 .recup-link:focus-visible {
-  outline: 3px solid rgb(57 120 197 / 22%);
-  outline-offset: 2px;
+  outline: 3px solid rgb(59 130 246 / 25%);
+  outline-offset: 1px;
 }
 
 .recup-link:disabled {
@@ -377,65 +598,64 @@
   cursor: not-allowed;
 }
 
-/* Avisos */
+/* ---------- Avisos ---------- */
 
 .recup-alerta {
-  margin-bottom: 16px;
-  padding: 11px 13px;
+  margin-bottom: 18px;
+  padding: 12px 14px;
   border: 1px solid transparent;
-  border-radius: 9px;
-  font-size: 11px;
-  line-height: 1.55;
+  border-radius: 12px;
+  font-size: 13px;
+  line-height: 1.5;
   text-align: left;
   overflow-wrap: anywhere;
 }
 
 .recup-alerta-erro {
-  border-color: #f0caca;
-  background: #fff5f4;
-  color: #ad3434;
+  border-color: #fecaca;
+  background: #fff5f5;
+  color: #ad2929;
+  animation: recup-treme 0.4s ease;
 }
 
 .recup-alerta-ok {
-  border-color: #bce7ce;
-  background: #f0fbf4;
-  color: #167347;
+  border-color: #bbf7d0;
+  background: #f0fdf4;
+  color: #15803d;
 }
 
-/* Nota de demonstração e ligação de regresso */
-
 .recup-demo {
-  margin: 16px 0 0;
-  padding: 11px 12px;
-  border: 1px solid #e8edf3;
-  border-radius: 9px;
-  background: #f7f9fb;
+  margin: 18px 0 0;
+  padding: 13px 14px;
+  border: 1px dashed #cfdbe9;
+  border-radius: 12px;
+  background: rgb(241 247 253 / 70%);
   color: var(--recup-secundario);
-  font-size: 10px;
-  line-height: 1.65;
+  font-size: 12px;
+  line-height: 1.7;
   overflow-wrap: anywhere;
 }
 
 .recup-demo code {
-  padding: 2px 5px;
-  border: 1px solid #e3eaf1;
-  border-radius: 5px;
+  padding: 2px 6px;
+  border: 1px solid #e0e8f1;
+  border-radius: 6px;
   background: #fff;
-  color: #40546a;
+  color: #3c526a;
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  font-size: 10px;
-}
-
-.recup-alt {
-  margin: 19px 0 0;
-  padding-top: 16px;
-  border-top: 1px solid #edf0f4;
-  color: var(--recup-secundario);
   font-size: 11px;
 }
 
+.recup-alt {
+  margin: 22px 0 0;
+  padding-top: 18px;
+  border-top: 1px solid rgb(42 69 98 / 8%);
+  color: var(--recup-secundario);
+  font-size: 14px;
+}
+
 .recup-alt a {
-  color: var(--recup-azul);
+  color: #3a74c4;
   font-weight: 700;
   text-decoration: none;
 }
@@ -447,24 +667,104 @@
 }
 
 .recup-alt a:focus-visible {
-  border-radius: 3px;
-  outline: 3px solid rgb(57 120 197 / 22%);
+  border-radius: 4px;
+  outline: 3px solid rgb(59 130 246 / 25%);
   outline-offset: 3px;
+}
+
+/* ---------- Keyframes ---------- */
+
+@keyframes recup-deriva-1 {
+  to {
+    transform: translate(12vmax, 8vmax) scale(1.15);
+  }
+}
+
+@keyframes recup-deriva-2 {
+  to {
+    transform: translate(-10vmax, -9vmax) scale(1.1);
+  }
+}
+
+@keyframes recup-deriva-3 {
+  to {
+    transform: translate(-8vmax, 6vmax) scale(1.25);
+  }
 }
 
 @keyframes recup-entrada {
   from {
     opacity: 0;
-    transform: translateY(9px);
+    transform: translateY(18px) scale(0.97);
   }
 
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
 }
 
-/* Ecrãs pequenos */
+@keyframes recup-passo-entra {
+  from {
+    opacity: 0;
+    transform: translateX(14px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes recup-emblema {
+  from {
+    opacity: 0;
+    transform: scale(0.6) rotate(-8deg);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1) rotate(0);
+  }
+}
+
+@keyframes recup-onda {
+  0% {
+    opacity: 0.8;
+    transform: scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(1.7);
+  }
+}
+
+@keyframes recup-gira-borda {
+  to {
+    --recup-angulo: 360deg;
+  }
+}
+
+@keyframes recup-gira {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes recup-treme {
+  20%,
+  60% {
+    transform: translateX(-5px);
+  }
+
+  40%,
+  80% {
+    transform: translateX(5px);
+  }
+}
+
+/* ---------- Responsivo ---------- */
 
 @media (max-width: 480px) {
   .recup {
@@ -474,58 +774,60 @@
 
   .recup-card {
     margin: auto 0;
-    padding: 25px 20px 20px;
-    border-radius: 16px;
-  }
-
-  .recup-titulo {
-    margin-bottom: 20px;
-  }
-
-  .recup-passos {
-    gap: 3px;
-    margin-bottom: 20px;
+    padding: 28px 20px 22px;
+    border-radius: 24px;
   }
 
   .recup-passo {
-    gap: 6px;
-    font-size: 9px;
+    font-size: 10px;
   }
 
-  .recup-linha {
-    gap: 5px 12px;
+  .recup-otp {
+    gap: 6px;
+  }
+
+  .recup-forca-texto {
+    min-width: 0;
   }
 }
 
 @media (max-width: 360px) {
   .recup-card {
-    padding: 22px 16px 18px;
+    padding: 24px 16px 18px;
   }
 
   .recup-passo-nome {
-    font-size: 8px;
-  }
-
-  .recup-demo {
-    padding: 9px 10px;
     font-size: 9px;
   }
 }
 
+/* ---------- Movimento reduzido ---------- */
+
 @media (prefers-reduced-motion: reduce) {
-  .recup-card {
+  .recup-aurora,
+  .recup-card,
+  .recup-card::before,
+  .recup-emblema,
+  .recup-emblema-anel,
+  .recup-form,
+  .recup-alerta-erro,
+  .recup-spinner {
     animation: none;
   }
 
   .recup-passo-num,
-  .recup-campo input,
+  .recup-entrada input,
+  .recup-otp-caixa,
   .recup-olho,
-  .recup-botao {
+  .recup-botao,
+  .recup-botao::after,
+  .recup-forca-barras span {
     transition: none;
   }
 
   .recup-botao:hover:not(:disabled),
-  .recup-botao:active:not(:disabled) {
+  .recup-botao:active:not(:disabled),
+  .recup-otp-caixa:focus-visible {
     transform: none;
   }
 }

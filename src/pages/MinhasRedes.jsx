@@ -16,10 +16,67 @@ const quando = (iso) => {
 const diaExtenso = (iso) =>
   new Date(iso).toLocaleDateString('pt-PT', { weekday: 'long', day: 'numeric', month: 'long' })
 
-function Selo({ rede, grande }) {
+const CAMINHOS = {
+  busca: 'M11 18a7 7 0 100-14 7 7 0 000 14zm10 3l-4.5-4.5',
+  fechar: 'M6 6l12 12M18 6L6 18',
+  voltar: 'M19 12H5m6-6l-6 6 6 6',
+  clip: 'M21.4 11.1l-9.2 9.2a6 6 0 01-8.5-8.5l9.2-9.2a4 4 0 015.7 5.7l-9.2 9.2a2 2 0 01-2.8-2.8l8.5-8.5',
+  enviar: 'M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z',
+  refresh: 'M20 11a8 8 0 10-2.3 5.7M20 4v7h-7',
+  estrela: 'M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9L12 3z',
+  chat: 'M4 5h16v11H9l-5 4V5z',
+  baixar: 'M12 4v11m-4-4l4 4 4-4M5 20h14',
+  caixa: 'M22 12h-6l-2 3h-4l-2-3H2M5.5 5h13l3.5 7v6H2v-6z',
+  alerta: 'M12 9v4m0 4h.01M10.3 3.9L2.4 18a2 2 0 001.7 3h15.8a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z',
+}
+
+function Icone({ nome, tamanho = 18 }) {
   return (
-    <span className={`redes-selo${grande ? ' redes-selo-grande' : ''}`} style={{ background: rede?.cor ?? '#6b7686' }} aria-hidden="true">
+    <svg
+      viewBox="0 0 24 24"
+      width={tamanho}
+      height={tamanho}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d={CAMINHOS[nome]} />
+    </svg>
+  )
+}
+
+function Selo({ rede, grande, mini }) {
+  const classe = `redes-selo${grande ? ' redes-selo-grande' : ''}${mini ? ' redes-selo-mini' : ''}`
+  return (
+    <span className={classe} style={{ background: rede?.cor ?? '#6b7686' }} aria-hidden="true">
       {rede?.sigla ?? '•'}
+    </span>
+  )
+}
+
+/** Cor estável por contacto */
+function matiz(texto = '') {
+  let h = 0
+  for (let i = 0; i < texto.length; i++) h = (h * 31 + texto.charCodeAt(i)) % 360
+  return h
+}
+
+/** Avatar do contacto, com o selo da rede por cima (opcional) */
+function AvatarContato({ contato, rede, grande }) {
+  const inicial = String(contato ?? '?').replace(/[^\p{L}\p{N}]/gu, '')[0]?.toUpperCase() ?? '?'
+  const h = matiz(String(contato))
+  return (
+    <span className={`redes-avatar${grande ? ' redes-avatar-grande' : ''}`} aria-hidden="true">
+      <span
+        className="redes-avatar-letra"
+        style={{ background: `linear-gradient(135deg, hsl(${h} 80% 62%), hsl(${(h + 40) % 360} 80% 52%))` }}
+      >
+        {inicial}
+      </span>
+      {rede && <Selo rede={rede} mini />}
     </span>
   )
 }
@@ -49,6 +106,11 @@ function Anexo({ anexo }) {
         <strong>{anexo.nome}</strong>
         <small>{formatarTamanho(anexo.tamanho)}</small>
       </span>
+      {anexo.url && (
+        <span className="redes-anexo-baixar" aria-hidden="true">
+          <Icone nome="baixar" tamanho={16} />
+        </span>
+      )}
     </>
   )
   return anexo.url ? (
@@ -65,6 +127,7 @@ function Conversa({ conversa, rede, onVoltar, onEnviado }) {
   const [anexos, setAnexos] = useState([]) // pendentes: { id, nome, tamanho, tipo, url }
   const [enviando, setEnviando] = useState(false)
   const [erro, setErro] = useState(null)
+  const [arrastando, setArrastando] = useState(false)
   const fim = useRef(null)
   const inputFicheiro = useRef(null)
   const pendentes = useRef([])
@@ -141,17 +204,44 @@ function Conversa({ conversa, rede, onVoltar, onEnviado }) {
     }
   }
 
+  // Arrastar e largar ficheiros para anexar
+  const aoArrastar = (e) => {
+    if (!e.dataTransfer?.types?.includes('Files')) return
+    e.preventDefault()
+    if (!arrastando) setArrastando(true)
+  }
+  const aoSairArrasto = (e) => {
+    if (!e.currentTarget.contains(e.relatedTarget)) setArrastando(false)
+  }
+  const aoLargar = (e) => {
+    if (!e.dataTransfer?.files?.length) return
+    e.preventDefault()
+    setArrastando(false)
+    if (!enviando) adicionar(e.dataTransfer.files)
+  }
+
   return (
-    <section className="redes-conversa" aria-label={`Conversa com ${conversa.contato}`}>
+    <section
+      className={`redes-conversa${arrastando ? ' redes-conversa-arrasto' : ''}`}
+      aria-label={`Conversa com ${conversa.contato}`}
+      onDragOver={aoArrastar}
+      onDragLeave={aoSairArrasto}
+      onDrop={aoLargar}
+    >
       <header className="redes-conversa-topo">
         <button type="button" className="redes-voltar" onClick={onVoltar} aria-label="Voltar à lista">
-          ←
+          <Icone nome="voltar" tamanho={20} />
         </button>
-        <Selo rede={rede} />
+        <AvatarContato contato={conversa.contato} rede={rede} grande />
         <div className="redes-conversa-titulo">
           <strong>{conversa.contato}</strong>
           <span>{conversa.assunto ?? rede?.nome}</span>
         </div>
+        {rede && (
+          <span className="redes-conversa-rede" style={{ '--cor-rede': rede.cor }}>
+            {rede.nome}
+          </span>
+        )}
       </header>
 
       <div className="redes-mensagens">
@@ -165,8 +255,8 @@ function Conversa({ conversa, rede, onVoltar, onEnviado }) {
                 {msg.texto && <p>{msg.texto}</p>}
                 {msg.anexos?.length > 0 && (
                   <div className="redes-anexos">
-                    {msg.anexos.map((a, i) => (
-                      <Anexo key={`${a.nome}-${i}`} anexo={a} />
+                    {msg.anexos.map((a, j) => (
+                      <Anexo key={`${a.nome}-${j}`} anexo={a} />
                     ))}
                   </div>
                 )}
@@ -178,9 +268,22 @@ function Conversa({ conversa, rede, onVoltar, onEnviado }) {
         <div ref={fim} />
       </div>
 
+      {arrastando && (
+        <div className="redes-arrasto" aria-hidden="true">
+          <span className="redes-arrasto-icone">
+            <Icone nome="clip" tamanho={28} />
+          </span>
+          <strong>Largue os ficheiros para anexar</strong>
+          <small>
+            Até {MAX_ANEXOS} anexos de {formatarTamanho(MAX_TAMANHO)}
+          </small>
+        </div>
+      )}
+
       <form className="redes-resposta" onSubmit={enviar}>
         {erro && (
           <div className="redes-erro" role="alert">
+            <Icone nome="alerta" tamanho={15} />
             {erro}
           </div>
         )}
@@ -204,7 +307,7 @@ function Conversa({ conversa, rede, onVoltar, onEnviado }) {
                   disabled={enviando}
                   aria-label={`Remover ${a.nome}`}
                 >
-                  ×
+                  <Icone nome="fechar" tamanho={13} />
                 </button>
               </li>
             ))}
@@ -229,9 +332,7 @@ function Conversa({ conversa, rede, onVoltar, onEnviado }) {
             aria-label="Anexar ficheiro"
             title={anexos.length >= MAX_ANEXOS ? `Máximo de ${MAX_ANEXOS} anexos` : 'Anexar ficheiro'}
           >
-            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <path d="M21.4 11.1l-9.2 9.2a6 6 0 0 1-8.5-8.5l9.2-9.2a4 4 0 0 1 5.7 5.7l-9.2 9.2a2 2 0 0 1-2.8-2.8l8.5-8.5" />
-            </svg>
+            <Icone nome="clip" tamanho={20} />
           </button>
           <textarea
             value={texto}
@@ -242,8 +343,18 @@ function Conversa({ conversa, rede, onVoltar, onEnviado }) {
             aria-label="Mensagem de resposta"
             disabled={enviando}
           />
-          <button type="submit" className="redes-enviar" disabled={!podeEnviar}>
-            {enviando ? 'A enviar…' : 'Enviar'}
+          <button type="submit" className="redes-enviar" disabled={!podeEnviar} aria-label="Enviar mensagem">
+            {enviando ? (
+              <>
+                <span className="redes-spinner" aria-hidden="true" />
+                <span className="redes-enviar-texto">A enviar…</span>
+              </>
+            ) : (
+              <>
+                <span className="redes-enviar-texto">Enviar</span>
+                <Icone nome="enviar" tamanho={17} />
+              </>
+            )}
           </button>
         </div>
         <span className="redes-dica">
@@ -259,6 +370,7 @@ export default function MinhasRedes() {
   const [redeAtiva, setRedeAtiva] = useState('todas')
   const [conversaId, setConversaId] = useState(null)
   const [busca, setBusca] = useState('')
+  const [soNaoLidas, setSoNaoLidas] = useState(false)
 
   const redes = useCarregar(() => redesApi.listar(), [])
   const conversas = useCarregar(() => redesApi.conversas(redeAtiva), [redeAtiva])
@@ -266,14 +378,16 @@ export default function MinhasRedes() {
   const redePorId = (id) => redes.dados?.find((r) => r.id === id)
   const totalNaoLidas = redes.dados ? redes.dados.reduce((s, r) => s + r.naoLidas, 0) : null
   const atual = conversas.dados?.find((c) => c.id === conversaId) ?? null
+  const naoLidasAqui = conversas.dados ? conversas.dados.filter((c) => c.naoLidas > 0).length : 0
 
   const termo = busca.trim().toLowerCase()
   const visiveis = (conversas.dados ?? []).filter(
     (c) =>
-      !termo ||
-      c.contato.toLowerCase().includes(termo) ||
-      c.ultimaMensagem.toLowerCase().includes(termo) ||
-      (c.assunto ?? '').toLowerCase().includes(termo),
+      (!soNaoLidas || c.naoLidas > 0) &&
+      (!termo ||
+        c.contato.toLowerCase().includes(termo) ||
+        c.ultimaMensagem.toLowerCase().includes(termo) ||
+        (c.assunto ?? '').toLowerCase().includes(termo)),
   )
 
   const recarregarTudo = () => {
@@ -285,6 +399,7 @@ export default function MinhasRedes() {
     setRedeAtiva(id)
     setConversaId(null)
     setBusca('')
+    setSoNaoLidas(false)
   }
 
   const abrirConversa = (c) => {
@@ -296,8 +411,14 @@ export default function MinhasRedes() {
 
   return (
     <>
-      <PageHead titulo="Minhas redes" descricao="Leia e responda às mensagens de todas as suas redes num só lugar.">
-        <button type="button" className="redes-btn" onClick={recarregarTudo} disabled={conversas.carregando}>
+      <PageHead titulo="" descricao="">
+        <button
+          type="button"
+          className={`redes-btn${conversas.carregando ? ' redes-btn-ocupado' : ''}`}
+          onClick={recarregarTudo}
+          disabled={conversas.carregando}
+        >
+          <Icone nome="refresh" tamanho={16} />
           {conversas.carregando ? 'A atualizar…' : 'Atualizar'}
         </button>
       </PageHead>
@@ -305,13 +426,14 @@ export default function MinhasRedes() {
       <div className="redes-layout" data-vista={atual ? 'conversa' : 'lista'}>
         {/* Menu lateral com as redes */}
         <nav className="redes-menu" aria-label="Redes">
+          <span className="redes-menu-titulo">Redes</span>
           <button
             type="button"
             className={`redes-menu-item${redeAtiva === 'todas' ? ' redes-menu-item-ativo' : ''}`}
             onClick={() => escolherRede('todas')}
             aria-current={redeAtiva === 'todas' ? 'page' : undefined}
           >
-            <Selo rede={{ sigla: '★', cor: '#3a74c4' }} />
+            <Selo rede={{ sigla: '★', cor: '#3b82f6' }} />
             <span className="redes-menu-nome">Todas as redes</span>
             {totalNaoLidas > 0 && <span className="redes-contador">{totalNaoLidas}</span>}
           </button>
@@ -336,21 +458,78 @@ export default function MinhasRedes() {
         <section className="redes-lista" aria-label={`Conversas — ${nomeRedeAtiva ?? ''}`}>
           <header className="redes-lista-topo">
             <h2>{nomeRedeAtiva ?? '…'}</h2>
-            <input
-              type="search"
-              value={busca}
-              onChange={(e) => setBusca(e.target.value)}
-              placeholder="Pesquisar conversas…"
-              aria-label="Pesquisar conversas"
-            />
+            <label className="redes-busca">
+              <span className="redes-busca-icone">
+                <Icone nome="busca" tamanho={16} />
+              </span>
+              <input
+                type="search"
+                value={busca}
+                onChange={(e) => setBusca(e.target.value)}
+                placeholder="Pesquisar conversas…"
+                aria-label="Pesquisar conversas"
+              />
+              {busca && (
+                <button type="button" className="redes-busca-limpar" onClick={() => setBusca('')} aria-label="Limpar pesquisa">
+                  <Icone nome="fechar" tamanho={13} />
+                </button>
+              )}
+            </label>
+
+            <div className="redes-abas" role="group" aria-label="Filtrar conversas">
+              <button
+                type="button"
+                className={`redes-aba${!soNaoLidas ? ' redes-aba-ativa' : ''}`}
+                onClick={() => setSoNaoLidas(false)}
+                aria-pressed={!soNaoLidas}
+              >
+                Todas
+              </button>
+              <button
+                type="button"
+                className={`redes-aba${soNaoLidas ? ' redes-aba-ativa' : ''}`}
+                onClick={() => setSoNaoLidas(true)}
+                aria-pressed={soNaoLidas}
+              >
+                Não lidas {naoLidasAqui > 0 && <span>{naoLidasAqui}</span>}
+              </button>
+            </div>
           </header>
 
           <div className="redes-lista-corpo">
-            {conversas.erro && <div className="redes-vazio">{conversas.erro}</div>}
-            {!conversas.erro && !conversas.dados && <div className="redes-vazio">A carregar…</div>}
-            {conversas.dados?.length === 0 && <div className="redes-vazio">Sem conversas nesta rede.</div>}
+            {conversas.erro && (
+              <div className="redes-vazio redes-vazio-erro">
+                <span className="redes-vazio-icone">
+                  <Icone nome="alerta" tamanho={24} />
+                </span>
+                <p>{conversas.erro}</p>
+              </div>
+            )}
+
+            {!conversas.erro && !conversas.dados && (
+              <div className="redes-esqueleto" role="status" aria-label="A carregar">
+                {[0, 1, 2, 3, 4].map((i) => (
+                  <span key={i} style={{ '--i': i }} />
+                ))}
+              </div>
+            )}
+
+            {conversas.dados?.length === 0 && (
+              <div className="redes-vazio">
+                <span className="redes-vazio-icone">
+                  <Icone nome="caixa" tamanho={24} />
+                </span>
+                <p>Sem conversas nesta rede.</p>
+              </div>
+            )}
+
             {conversas.dados?.length > 0 && visiveis.length === 0 && (
-              <div className="redes-vazio">Nenhuma conversa corresponde à pesquisa.</div>
+              <div className="redes-vazio">
+                <span className="redes-vazio-icone">
+                  <Icone nome="busca" tamanho={24} />
+                </span>
+                <p>{soNaoLidas && !termo ? 'Não tem conversas por ler.' : 'Nenhuma conversa corresponde à pesquisa.'}</p>
+              </div>
             )}
 
             {visiveis.map((c) => (
@@ -360,7 +539,7 @@ export default function MinhasRedes() {
                 className={`redes-conv${c.id === conversaId ? ' redes-conv-ativa' : ''}${c.naoLidas > 0 ? ' redes-conv-nova' : ''}`}
                 onClick={() => abrirConversa(c)}
               >
-                <Selo rede={redePorId(c.redeId)} />
+                <AvatarContato contato={c.contato} rede={redePorId(c.redeId)} />
                 <span className="redes-conv-corpo">
                   <span className="redes-conv-linha">
                     <strong>{c.contato}</strong>
@@ -391,7 +570,15 @@ export default function MinhasRedes() {
           />
         ) : (
           <section className="redes-conversa redes-conversa-vazia">
-            <p>Escolha uma conversa para ler e responder.</p>
+            <div className="redes-vazio-central">
+              <span className="redes-vazio-emblema" aria-hidden="true">
+                <Icone nome="chat" tamanho={34} />
+                <i className="redes-vazio-bolha redes-vazio-bolha-1" />
+                <i className="redes-vazio-bolha redes-vazio-bolha-2" />
+              </span>
+              <h3>As suas conversas, num só lugar</h3>
+              <p>Escolha uma conversa na lista para ler e responder.</p>
+            </div>
           </section>
         )}
       </div>
