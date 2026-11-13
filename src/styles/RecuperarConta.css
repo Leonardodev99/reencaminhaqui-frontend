@@ -1,235 +1,531 @@
-/* Estilos da página de recuperação de conta (RecuperarConta.jsx) */
+/* Recuperação de conta */
 
 .recup {
-  min-height: 100vh;
+  --recup-texto: #192b3d;
+  --recup-secundario: #6b7b8e;
+  --recup-borda: #e2e8f0;
+  --recup-azul: #3978c5;
+  --recup-ciano: #37b9cf;
+
+  position: relative;
+  isolation: isolate;
   display: flex;
+  min-height: 100vh;
+  min-height: 100svh;
   align-items: center;
   justify-content: center;
-  padding: 24px 16px;
+  overflow: auto;
+  padding: 32px 16px;
   background:
-    radial-gradient(900px 500px at 10% -10%, rgba(74, 139, 224, 0.16), transparent 60%),
-    radial-gradient(800px 500px at 95% 110%, rgba(79, 214, 234, 0.18), transparent 60%),
-    #f9faf5; /* igual ao fundo do logo */
+    radial-gradient(ellipse at 12% 8%, rgb(74 139 224 / 13%), transparent 37%),
+    radial-gradient(ellipse at 92% 92%, rgb(79 214 234 / 14%), transparent 36%),
+    #f6f8f6;
+  color: var(--recup-texto);
+}
+
+.recup::before,
+.recup::after {
+  position: fixed;
+  z-index: -1;
+  content: "";
+  pointer-events: none;
+  border: 1px solid rgb(74 139 224 / 8%);
+  border-radius: 50%;
+}
+
+.recup::before {
+  top: -230px;
+  right: -180px;
+  width: 520px;
+  height: 520px;
+}
+
+.recup::after {
+  bottom: -290px;
+  left: -200px;
+  width: 620px;
+  height: 620px;
 }
 
 .recup-card {
-  width: 100%;
-  max-width: 420px;
-  background: #fff;
-  border: 1px solid #e2e6ec;
-  border-radius: 16px;
-  padding: 28px 28px 22px;
-  box-shadow: 0 10px 40px rgba(28, 36, 48, 0.08);
+  width: min(100%, 440px);
+  margin: auto;
+  padding: 30px 32px 24px;
+  border: 1px solid rgb(222 230 239 / 90%);
+  border-radius: 20px;
+  background: rgb(255 255 255 / 96%);
+  box-shadow:
+    0 24px 70px rgb(34 55 79 / 10%),
+    0 3px 12px rgb(34 55 79 / 4%);
   text-align: center;
+  animation: recup-entrada 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 
 .recup-logo {
-  width: 120px;
-  height: auto;
-  margin: 0 auto 4px;
   display: block;
+  width: min(132px, 45%);
+  height: auto;
+  margin: 0 auto 12px;
+  filter: drop-shadow(0 6px 12px rgb(42 69 98 / 9%));
 }
 
 .recup-titulo {
-  font-size: 22px;
-  margin: 8px 0 18px;
+  margin: 0 0 22px;
+  color: var(--recup-texto);
+  font-size: clamp(22px, 5vw, 26px);
+  font-weight: 750;
+  letter-spacing: -0.035em;
+  line-height: 1.2;
 }
 
-/* Indicador de passos */
+/* Indicador de progresso */
+
 .recup-passos {
-  list-style: none;
-  margin: 0 0 20px;
-  padding: 0;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 6px;
+  margin: 0 0 23px;
+  padding: 0;
+  list-style: none;
 }
 
 .recup-passo {
+  position: relative;
+  z-index: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
-  position: relative;
-  font-size: 12px;
-  color: #6b7686;
+  gap: 7px;
+  color: #8491a0;
+  font-size: 10px;
+  line-height: 1.3;
 }
 
-/* Linha entre os passos */
 .recup-passo:not(:first-child)::before {
-  content: '';
   position: absolute;
-  top: 13px;
+  top: 14px;
   right: 50%;
+  z-index: -1;
   width: 100%;
   height: 2px;
-  background: #e2e6ec;
-  z-index: 0;
+  background: #e5ebf1;
+  content: "";
 }
 
 .recup-passo-feito:not(:first-child)::before,
-.recup-passo-atual:not(:first-child)::before { background: #4a8be0; }
+.recup-passo-atual:not(:first-child)::before {
+  background: #78a8df;
+}
 
 .recup-passo-num {
-  position: relative;
-  z-index: 1;
-  width: 28px;
-  height: 28px;
   display: inline-flex;
+  width: 29px;
+  height: 29px;
   align-items: center;
   justify-content: center;
+  border: 2px solid #fff;
   border-radius: 50%;
-  background: #eceff3;
-  color: #6b7686;
-  font-size: 13px;
+  background: #edf1f5;
+  box-shadow: 0 0 0 1px #e1e7ee;
+  color: #748397;
+  font-size: 11px;
+  font-weight: 750;
+  transition:
+    background-color 0.18s ease,
+    box-shadow 0.18s ease,
+    color 0.18s ease;
+}
+
+.recup-passo-atual .recup-passo-num {
+  background: var(--recup-azul);
+  box-shadow: 0 0 0 1px var(--recup-azul), 0 3px 9px rgb(57 120 197 / 25%);
+  color: #fff;
+}
+
+.recup-passo-feito .recup-passo-num {
+  background: #18845b;
+  box-shadow: 0 0 0 1px #18845b;
+  color: #fff;
+}
+
+.recup-passo-atual .recup-passo-nome {
+  color: var(--recup-texto);
   font-weight: 700;
 }
 
-.recup-passo-atual .recup-passo-num { background: #3a74c4; color: #fff; }
-.recup-passo-feito .recup-passo-num { background: #15803d; color: #fff; }
-.recup-passo-atual .recup-passo-nome { color: #1c2430; font-weight: 600; }
+.recup-passo-feito .recup-passo-nome {
+  color: #53667b;
+  font-weight: 600;
+}
 
 /* Formulário */
-.recup-form { text-align: left; }
+
+.recup-form {
+  text-align: left;
+}
 
 .recup-texto {
-  margin: 0 0 16px;
-  font-size: 14px;
-  line-height: 1.5;
-  color: #3a4556;
+  margin: 0 0 18px;
+  color: #53667b;
+  font-size: 12px;
+  line-height: 1.65;
+}
+
+.recup-texto strong {
+  color: #34485c;
+  font-weight: 700;
+  overflow-wrap: anywhere;
 }
 
 .recup-campo {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  margin-bottom: 14px;
+  gap: 7px;
+  margin-bottom: 17px;
 }
 
-.recup-campo label { font-size: 13px; font-weight: 600; }
+.recup-campo label {
+  color: #34485c;
+  font-size: 12px;
+  font-weight: 650;
+}
 
 .recup-campo input {
+  box-sizing: border-box;
   width: 100%;
-  font: inherit;
+  min-height: 44px;
   padding: 10px 12px;
-  border: 1px solid #e2e6ec;
-  border-radius: 10px;
-  background: #fff;
-  color: #1c2430;
-  transition: border-color 0.15s, box-shadow 0.15s;
-}
-
-.recup-campo input:focus {
+  border: 1px solid var(--recup-borda);
+  border-radius: 9px;
   outline: none;
-  border-color: #4a8be0;
-  box-shadow: 0 0 0 3px rgba(74, 139, 224, 0.2);
+  background: #fbfcfe;
+  color: var(--recup-texto);
+  font: inherit;
+  font-size: 13px;
+  transition:
+    border-color 0.16s ease,
+    background-color 0.16s ease,
+    box-shadow 0.16s ease;
 }
 
-.recup-campo input:disabled { background: #f4f6f9; cursor: not-allowed; }
+.recup-campo input::placeholder {
+  color: #9aa7b5;
+}
+
+.recup-campo input:hover:not(:disabled) {
+  border-color: #cbd6e3;
+  background: #fff;
+}
+
+.recup-campo input:focus-visible {
+  border-color: var(--recup-azul);
+  background: #fff;
+  box-shadow: 0 0 0 4px rgb(57 120 197 / 13%);
+}
+
+.recup-campo input:disabled {
+  background: #f1f4f7;
+  color: #8391a0;
+  cursor: not-allowed;
+}
 
 .recup-campo .recup-codigo {
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 24px;
+  min-height: 54px;
+  padding: 10px 0 10px 0.4em;
+  border-color: #d7e2ee;
+  background: #f9fbfd;
+  color: #263d56;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 25px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
   letter-spacing: 0.4em;
   text-align: center;
-  padding-left: 0.4em;
 }
 
-.recup-dica { font-size: 12px; color: #6b7686; }
+.recup-campo .recup-codigo:focus-visible {
+  background: #fff;
+}
 
-.recup-senha { position: relative; }
-.recup-senha input { padding-right: 84px; }
+.recup-dica {
+  color: var(--recup-secundario);
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+/* Mostrar/ocultar palavra-passe */
+
+.recup-senha {
+  position: relative;
+}
+
+.recup-senha input {
+  padding-right: 88px;
+}
 
 .recup-olho {
   position: absolute;
   top: 50%;
-  right: 8px;
+  right: 7px;
   transform: translateY(-50%);
+  padding: 7px 9px;
   border: 0;
-  background: none;
-  padding: 6px 8px;
-  border-radius: 6px;
+  border-radius: 7px;
+  background: transparent;
+  color: #3972b2;
   font: inherit;
-  font-size: 13px;
-  color: #3a74c4;
+  font-size: 11px;
+  font-weight: 650;
   cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
 }
 
-.recup-olho:hover { background: #eef4fc; }
+.recup-olho:hover {
+  background: #edf4fc;
+  color: #285d9e;
+}
+
+.recup-olho:focus-visible {
+  outline: 3px solid rgb(57 120 197 / 24%);
+  outline-offset: 2px;
+}
+
+/* Ação principal */
 
 .recup-botao {
+  display: flex;
   width: 100%;
-  padding: 12px 16px;
+  min-height: 46px;
+  align-items: center;
+  justify-content: center;
+  padding: 11px 16px;
   border: 0;
   border-radius: 10px;
-  font: inherit;
-  font-weight: 600;
+  background: linear-gradient(110deg, var(--recup-azul), var(--recup-ciano));
+  box-shadow: 0 6px 15px rgb(57 120 197 / 20%);
   color: #fff;
-  background: linear-gradient(135deg, #4a8be0, #3fbfd9);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
   cursor: pointer;
-  transition: filter 0.15s, transform 0.05s;
+  transition:
+    box-shadow 0.16s ease,
+    filter 0.16s ease,
+    transform 0.16s ease;
 }
 
-.recup-botao:hover:not(:disabled) { filter: brightness(1.06); }
-.recup-botao:active:not(:disabled) { transform: translateY(1px); }
-.recup-botao:disabled { opacity: 0.7; cursor: not-allowed; }
+.recup-botao:hover:not(:disabled) {
+  transform: translateY(-1px);
+  filter: saturate(1.08) brightness(1.03);
+  box-shadow: 0 9px 19px rgb(57 120 197 / 26%);
+}
+
+.recup-botao:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.recup-botao:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 4px rgb(57 120 197 / 18%),
+    0 6px 15px rgb(57 120 197 / 20%);
+}
+
+.recup-botao:disabled {
+  box-shadow: none;
+  opacity: 0.62;
+  cursor: not-allowed;
+}
+
+/* Alterar e-mail e reenviar código */
 
 .recup-linha {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
-  gap: 12px;
+  gap: 8px 14px;
   margin-top: 12px;
 }
 
 .recup-link {
+  padding: 5px 0;
   border: 0;
-  background: none;
-  padding: 4px 0;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--recup-azul);
   font: inherit;
-  font-size: 13px;
-  color: #3a74c4;
+  font-size: 11px;
+  font-weight: 650;
   cursor: pointer;
 }
 
-.recup-link:hover:not(:disabled) { text-decoration: underline; }
-.recup-link:disabled { color: #6b7686; cursor: not-allowed; }
-
-/* Avisos */
-.recup-alerta {
-  margin-bottom: 14px;
-  padding: 10px 12px;
-  border-radius: 8px;
-  font-size: 14px;
-  text-align: left;
+.recup-link:hover:not(:disabled) {
+  color: #285d9e;
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
-.recup-alerta-erro { background: #fee2e2; color: #b91c1c; }
-.recup-alerta-ok { background: #dcfce7; color: #15803d; }
+.recup-link:focus-visible {
+  outline: 3px solid rgb(57 120 197 / 22%);
+  outline-offset: 2px;
+}
+
+.recup-link:disabled {
+  color: #8c99a8;
+  cursor: not-allowed;
+}
+
+/* Avisos */
+
+.recup-alerta {
+  margin-bottom: 16px;
+  padding: 11px 13px;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  font-size: 11px;
+  line-height: 1.55;
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+
+.recup-alerta-erro {
+  border-color: #f0caca;
+  background: #fff5f4;
+  color: #ad3434;
+}
+
+.recup-alerta-ok {
+  border-color: #bce7ce;
+  background: #f0fbf4;
+  color: #167347;
+}
+
+/* Nota de demonstração e ligação de regresso */
 
 .recup-demo {
   margin: 16px 0 0;
-  font-size: 12px;
-  line-height: 1.5;
-  color: #6b7686;
+  padding: 11px 12px;
+  border: 1px solid #e8edf3;
+  border-radius: 9px;
+  background: #f7f9fb;
+  color: var(--recup-secundario);
+  font-size: 10px;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
 }
 
 .recup-demo code {
-  background: #eceff3;
-  padding: 1px 5px;
-  border-radius: 4px;
-  font-size: 12px;
+  padding: 2px 5px;
+  border: 1px solid #e3eaf1;
+  border-radius: 5px;
+  background: #fff;
+  color: #40546a;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 10px;
 }
 
 .recup-alt {
-  margin: 18px 0 0;
-  font-size: 14px;
-  color: #6b7686;
+  margin: 19px 0 0;
+  padding-top: 16px;
+  border-top: 1px solid #edf0f4;
+  color: var(--recup-secundario);
+  font-size: 11px;
 }
 
-.recup-alt a { color: #3a74c4; font-weight: 600; text-decoration: none; }
-.recup-alt a:hover { text-decoration: underline; }
+.recup-alt a {
+  color: var(--recup-azul);
+  font-weight: 700;
+  text-decoration: none;
+}
 
-@media (max-width: 420px) {
-  .recup-card { padding: 24px 18px 18px; border-radius: 14px; }
-  .recup-passo-nome { font-size: 11px; }
+.recup-alt a:hover {
+  color: #285d9e;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.recup-alt a:focus-visible {
+  border-radius: 3px;
+  outline: 3px solid rgb(57 120 197 / 22%);
+  outline-offset: 3px;
+}
+
+@keyframes recup-entrada {
+  from {
+    opacity: 0;
+    transform: translateY(9px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Ecrãs pequenos */
+
+@media (max-width: 480px) {
+  .recup {
+    align-items: flex-start;
+    padding: 18px 12px;
+  }
+
+  .recup-card {
+    margin: auto 0;
+    padding: 25px 20px 20px;
+    border-radius: 16px;
+  }
+
+  .recup-titulo {
+    margin-bottom: 20px;
+  }
+
+  .recup-passos {
+    gap: 3px;
+    margin-bottom: 20px;
+  }
+
+  .recup-passo {
+    gap: 6px;
+    font-size: 9px;
+  }
+
+  .recup-linha {
+    gap: 5px 12px;
+  }
+}
+
+@media (max-width: 360px) {
+  .recup-card {
+    padding: 22px 16px 18px;
+  }
+
+  .recup-passo-nome {
+    font-size: 8px;
+  }
+
+  .recup-demo {
+    padding: 9px 10px;
+    font-size: 9px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .recup-card {
+    animation: none;
+  }
+
+  .recup-passo-num,
+  .recup-campo input,
+  .recup-olho,
+  .recup-botao {
+    transition: none;
+  }
+
+  .recup-botao:hover:not(:disabled),
+  .recup-botao:active:not(:disabled) {
+    transform: none;
+  }
 }
