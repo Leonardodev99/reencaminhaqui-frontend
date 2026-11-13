@@ -1,18 +1,54 @@
-/* Estilos da página de reencaminhamentos (Reencaminhamentos.jsx) */
+/* Página de reencaminhamentos */
+
+.reenv-btn,
+.reenv-filtros,
+.reenv-card {
+  --reenv-texto: #192b3d;
+  --reenv-secundario: #6b7b8e;
+  --reenv-borda: #e4eaf1;
+  --reenv-azul: #3978c5;
+}
+
+/* Botão de atualização */
 
 .reenv-btn {
-  border: 1px solid #e2e6ec;
-  background: #fff;
-  color: #1c2430;
+  display: inline-flex;
+  min-height: 40px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   padding: 8px 14px;
-  border-radius: 8px;
+  border: 1px solid var(--reenv-borda);
+  border-radius: 9px;
+  background: #fff;
+  box-shadow: 0 2px 6px rgb(28 48 70 / 4%);
+  color: #34485c;
   font: inherit;
-  font-size: 14px;
+  font-size: 13px;
+  font-weight: 650;
   cursor: pointer;
+  transition:
+    background-color 0.16s ease,
+    border-color 0.16s ease,
+    box-shadow 0.16s ease,
+    transform 0.16s ease;
 }
 
 .reenv-btn:hover:not(:disabled) {
-  background: #eceff3;
+  transform: translateY(-1px);
+  border-color: #c4d5e8;
+  background: #f5f9fe;
+  box-shadow: 0 4px 10px rgb(28 48 70 / 7%);
+}
+
+.reenv-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.reenv-btn:focus-visible,
+.reenv-chip:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 4px rgb(57 120 197 / 16%);
 }
 
 .reenv-btn:disabled {
@@ -21,118 +57,179 @@
 }
 
 /* Filtros por estado */
+
 .reenv-filtros {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: 8px;
-  margin-bottom: 14px;
+  margin-bottom: 16px;
 }
 
 .reenv-chip {
   display: inline-flex;
+  min-height: 36px;
   align-items: center;
+  justify-content: center;
   gap: 8px;
-  border: 1px solid #e2e6ec;
-  background: #fff;
-  color: #1c2430;
-  padding: 7px 12px;
+  padding: 6px 11px;
+  border: 1px solid var(--reenv-borda);
   border-radius: 999px;
+  background: #fff;
+  color: #40546a;
   font: inherit;
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: 0.015em;
   cursor: pointer;
-  transition: background 0.15s, border-color 0.15s;
+  transition:
+    border-color 0.15s ease,
+    background-color 0.15s ease,
+    color 0.15s ease,
+    transform 0.15s ease;
 }
 
 .reenv-chip:hover {
-  background: #f4f6f9;
+  transform: translateY(-1px);
+  border-color: #cbd8e6;
+  background: #f8fafc;
 }
 
 .reenv-chip span {
-  min-width: 20px;
-  padding: 1px 6px;
+  display: inline-flex;
+  min-width: 21px;
+  height: 21px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 6px;
   border-radius: 999px;
-  background: #eceff3;
-  color: #6b7686;
-  font-size: 12px;
-  text-align: center;
+  background: #eef2f6;
+  color: #68798d;
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
 }
 
 .reenv-chip-ativo {
-  background: #3a74c4;
-  border-color: #3a74c4;
+  border-color: #3978c5;
+  background: #3978c5;
   color: #fff;
 }
 
 .reenv-chip-ativo:hover {
-  background: #2f64ad;
+  border-color: #2f68ad;
+  background: #2f68ad;
 }
 
 .reenv-chip-ativo span {
-  background: rgba(255, 255, 255, 0.25);
+  background: rgb(255 255 255 / 20%);
   color: #fff;
 }
 
 /* Tabela */
+
 .reenv-card {
+  overflow: hidden;
+  border: 1px solid var(--reenv-borda);
+  border-radius: 14px;
   background: #fff;
-  border: 1px solid #e2e6ec;
-  border-radius: 10px;
+  box-shadow: 0 8px 26px rgb(28 48 70 / 5%);
 }
 
 .reenv-tabela-wrap {
+  width: 100%;
   overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-color: #c7d2df transparent;
+  scrollbar-width: thin;
 }
 
 .reenv-tabela {
   width: 100%;
-  border-collapse: collapse;
-  font-size: 14px;
+  min-width: 900px;
+  border-collapse: separate;
+  border-spacing: 0;
+  color: var(--reenv-texto);
+  font-size: 12px;
 }
 
 .reenv-tabela th {
+  padding: 13px 15px;
+  border-bottom: 1px solid var(--reenv-borda);
+  background: #f8fafc;
+  color: var(--reenv-secundario);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
   text-align: left;
-  padding: 12px 16px;
-  border-bottom: 1px solid #e2e6ec;
-  font-size: 12px;
-  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: #6b7686;
   white-space: nowrap;
 }
 
 .reenv-tabela td {
-  padding: 12px 16px;
-  border-bottom: 1px solid #e2e6ec;
+  padding: 13px 15px;
+  border-bottom: 1px solid #edf1f5;
   vertical-align: middle;
 }
 
-.reenv-tabela tr:last-child td {
-  border-bottom: 0;
+.reenv-tabela tbody tr {
+  transition: background-color 0.14s ease;
 }
 
 .reenv-tabela tbody tr:hover {
-  background: #fafbfc;
+  background: #f8fbff;
+}
+
+.reenv-tabela tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.reenv-tabela th:first-child,
+.reenv-tabela td:first-child {
+  padding-left: 18px;
+}
+
+.reenv-tabela th:last-child,
+.reenv-tabela td:last-child {
+  padding-right: 18px;
+}
+
+.reenv-tabela td:first-child,
+.reenv-tabela td:nth-child(2) {
+  color: #53667b;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
 .reenv-mono {
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 13px;
+  max-width: 210px;
+  overflow: hidden;
+  color: #40546a;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 11px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .reenv-muted {
-  color: #6b7686;
+  color: var(--reenv-secundario);
+  font-size: 11px;
+  white-space: nowrap;
 }
 
 .reenv-erro {
-  color: #b91c1c;
   max-width: 320px;
+  overflow: hidden;
+  color: #b83232;
+  font-size: 11px;
+  line-height: 1.5;
+  text-overflow: ellipsis;
 }
 
 /* Barra de tentativas */
+
 .reenv-tentativas {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 8px;
 }
@@ -140,31 +237,78 @@
 .reenv-tentativas-barra {
   width: 64px;
   height: 6px;
-  border-radius: 999px;
-  background: #eceff3;
   overflow: hidden;
+  border-radius: 999px;
+  background: #e9eef4;
 }
 
 .reenv-tentativas-barra span {
   display: block;
   height: 100%;
-  border-radius: 999px;
-  background: #3a74c4;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #3978c5, #37b9cf);
+  transition: width 0.3s ease;
 }
 
 .reenv-tentativas-barra .reenv-esgotadas {
-  background: #b91c1c;
+  background: linear-gradient(90deg, #d35c5c, #b83232);
 }
 
 .reenv-tentativas-num {
-  font-size: 13px;
-  color: #6b7686;
+  color: var(--reenv-secundario);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
   white-space: nowrap;
 }
 
+/* Carregamento, erro e estado vazio */
+
 .reenv-vazio {
-  padding: 36px 16px;
+  display: grid;
+  min-height: 150px;
+  place-items: center;
+  padding: 28px 20px;
+  color: var(--reenv-secundario);
+  font-size: 13px;
+  line-height: 1.6;
   text-align: center;
-  color: #6b7686;
-  font-size: 14px;
+}
+
+/* Ecrãs pequenos */
+
+@media (max-width: 600px) {
+  .reenv-filtros {
+    gap: 7px;
+    margin-bottom: 13px;
+  }
+
+  .reenv-chip {
+    min-height: 34px;
+    gap: 6px;
+    padding: 5px 9px;
+    font-size: 10px;
+  }
+
+  .reenv-card {
+    border-radius: 12px;
+  }
+
+  .reenv-tabela {
+    min-width: 850px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reenv-btn,
+  .reenv-chip,
+  .reenv-tabela tbody tr,
+  .reenv-tentativas-barra span {
+    transition: none;
+  }
+
+  .reenv-btn:hover:not(:disabled),
+  .reenv-chip:hover {
+    transform: none;
+  }
 }
