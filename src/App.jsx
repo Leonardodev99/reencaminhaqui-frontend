@@ -6,6 +6,7 @@ import Reencaminhamentos from './pages/Reencaminhamentos';
 import Mensagens from './pages/Mensagens';
 import Perfil from './pages/Perfil';
 import MinhasRedes from './pages/MinhasRedes';
+import Rotas from './pages/Rotas';
 
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
         <Route path="/mensagens" element={<Mensagens />} />
         <Route path="/perfil" element={<Perfil />} />
         <Route path="/minhas-redes" element={<MinhasRedes />} />
+        <Route path="/rotas" element={<Rotas />} />
       
       </Routes>
     </BrowserRouter>
