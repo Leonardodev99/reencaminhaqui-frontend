@@ -1,12 +1,13 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { authApi } from '../api'
 import logo from '../assets/logo.png'
 import '../styles/Login.css'
 
 export default function Login() {
   const navigate = useNavigate()
-  const [usuario, setUsuario] = useState('')
+  const { state } = useLocation() // vem da página "Criar conta"
+  const [usuario, setUsuario] = useState(state?.usuario ?? '')
   const [senha, setSenha] = useState('')
   const [mostrarSenha, setMostrarSenha] = useState(false)
   const [erro, setErro] = useState(null)
@@ -24,7 +25,7 @@ export default function Login() {
     setEntrando(true)
     try {
       await authApi.entrar({ usuario: usuario.trim(), senha })
-      navigate('/Dashboard', { replace: true })
+      navigate('/', { replace: true })
     } catch (err) {
       setErro(err.message)
     } finally {
@@ -41,6 +42,12 @@ export default function Login() {
         <p className="login-sub">Aceda ao painel de reencaminhamento de mensagens.</p>
 
         <form className="login-form" onSubmit={entrar} noValidate>
+          {state?.contaCriada && !erro && (
+            <div className="login-sucesso" role="status">
+              Conta criada com sucesso. Inicie sessão para continuar.
+            </div>
+          )}
+
           {erro && (
             <div className="login-erro" role="alert">
               {erro}
@@ -89,6 +96,10 @@ export default function Login() {
             {entrando ? 'A entrar…' : 'Entrar'}
           </button>
         </form>
+
+        <p className="login-alt">
+          Ainda não tem conta? <Link to="/criar-conta">Criar conta</Link>
+        </p>
 
         <p className="login-demo">
           Modo de demonstração: utilizador <code>admin</code> e palavra-passe <code>admin123</code>.

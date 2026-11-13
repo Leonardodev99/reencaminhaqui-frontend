@@ -291,3 +291,26 @@
     transition: none;
   }
 }
+/* Ligação para criar conta e aviso de conta criada */
+.login-alt {
+  margin: 18px 0 0;
+  font-size: 14px;
+  color: #6b7686;
+}
+
+.login-alt a {
+  color: #3a74c4;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.login-alt a:hover { text-decoration: underline; }
+
+.login-sucesso {
+  margin-bottom: 16px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  background: #dcfce7;
+  color: #15803d;
+}

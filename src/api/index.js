@@ -1,7 +1,7 @@
 // Serviços de API simulados.
 // Cada função devolve uma Promise e lança ApiError com o mesmo formato do
 // GlobalExceptionHandler (status, message), para trocar depois por fetch/axios
-// sem alterar as páginas.
+
 import { db, perfilDb, PROVEDORES } from './mockDb'
 
 export class ApiError extends Error {
@@ -128,13 +128,46 @@ export const formatarTexto = (remetente, texto) => `[Mensagem de ${remetente}]: 
 // ---------- Autenticação (simulada) ----------
 // O back-end ainda não tem login (secção 12 da documentação, ponto 11).
 // Credenciais de demonstração: admin / admin123. Trocar por POST /api/auth/login.
+const contas = [{ ...perfilDb }] // contas registadas (a primeira é a de demonstração)
+const EMAIL_VALIDO = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+const UTILIZADOR_VALIDO = /^[a-zA-Z0-9._-]{3,20}$/
+
+// Mantém a lista de contas igual ao perfil ativo (nome, e-mail e palavra-passe podem mudar)
+const sincronizarConta = () => {
+  const conta = contas.find((c) => c.usuario === perfilDb.usuario)
+  if (conta) Object.assign(conta, perfilDb)
+}
+
 export const authApi = {
   async entrar({ usuario, senha }) {
     await delay(600)
-    if (usuario !== perfilDb.usuario || senha !== perfilDb.senha) {
-      throw new ApiError(401, 'Utilizador ou palavra-passe incorretos.')
+    const conta = contas.find((c) => c.usuario.toLowerCase() === usuario.toLowerCase() && c.senha === senha)
+    if (!conta) throw new ApiError(401, 'Utilizador ou palavra-passe incorretos.')
+    Object.assign(perfilDb, conta) // o perfil passa a mostrar esta conta
+    return { usuario: conta.usuario, token: 'token-de-demonstracao' }
+  },
+
+  // Trocar por POST /api/auth/registar
+  async registar({ nome, email, usuario, senha }) {
+    await delay(700)
+    if (!nome?.trim()) throw new ApiError(400, 'O nome é obrigatório')
+    if (!EMAIL_VALIDO.test((email || '').trim())) throw new ApiError(400, 'E-mail inválido')
+    if (!UTILIZADOR_VALIDO.test((usuario || '').trim())) throw new ApiError(400, 'Nome de utilizador inválido')
+    if (!senha || senha.length < 8) throw new ApiError(400, 'A palavra-passe deve ter pelo menos 8 caracteres.')
+    if (contas.some((c) => c.usuario.toLowerCase() === usuario.trim().toLowerCase()))
+      throw new ApiError(409, 'Este nome de utilizador já está em uso.')
+    if (contas.some((c) => c.email.toLowerCase() === email.trim().toLowerCase()))
+      throw new ApiError(409, 'Já existe uma conta com este e-mail.')
+    const conta = {
+      usuario: usuario.trim(),
+      senha,
+      nome: nome.trim(),
+      email: email.trim(),
+      funcao: 'USER',
+      criadoEm: new Date().toISOString().slice(0, 19),
     }
-    return { usuario, token: 'token-de-demonstracao' }
+    contas.push(conta)
+    return { usuario: conta.usuario }
   },
 }
 
@@ -155,6 +188,7 @@ export const perfilApi = {
     if (!EMAIL.test((email || '').trim())) throw new ApiError(400, 'E-mail inválido')
     perfilDb.nome = nome.trim()
     perfilDb.email = email.trim()
+    sincronizarConta()
     return clone(semSenha(perfilDb))
   },
 
@@ -164,6 +198,7 @@ export const perfilApi = {
     if (!nova || nova.length < 8) throw new ApiError(400, 'A nova palavra-passe deve ter pelo menos 8 caracteres.')
     if (nova === atual) throw new ApiError(400, 'A nova palavra-passe deve ser diferente da atual.')
     perfilDb.senha = nova
+    sincronizarConta()
   },
 }
 

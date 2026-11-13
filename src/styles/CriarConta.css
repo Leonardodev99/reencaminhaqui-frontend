@@ -1,0 +1,191 @@
+/* Estilos da página de criação de conta (CriarConta.jsx) */
+
+.conta {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  background:
+    radial-gradient(900px 500px at 85% -10%, rgba(74, 139, 224, 0.16), transparent 60%),
+    radial-gradient(800px 500px at 5% 110%, rgba(79, 214, 234, 0.18), transparent 60%),
+    #f9faf5; /* igual ao fundo do logo */
+}
+
+.conta-card {
+  width: 100%;
+  max-width: 440px;
+  background: #fff;
+  border: 1px solid #e2e6ec;
+  border-radius: 16px;
+  padding: 28px 28px 22px;
+  box-shadow: 0 10px 40px rgba(28, 36, 48, 0.08);
+  text-align: center;
+}
+
+.conta-logo {
+  width: 120px;
+  height: auto;
+  margin: 0 auto 4px;
+  display: block;
+}
+
+.conta-titulo {
+  font-size: 22px;
+  margin: 8px 0 4px;
+}
+
+.conta-sub {
+  margin: 0 0 20px;
+  font-size: 14px;
+  color: #6b7686;
+}
+
+.conta-form { text-align: left; }
+
+.conta-campo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.conta-campo label {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.conta-campo input:not([type='checkbox']) {
+  width: 100%;
+  font: inherit;
+  padding: 10px 12px;
+  border: 1px solid #e2e6ec;
+  border-radius: 10px;
+  background: #fff;
+  color: #1c2430;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.conta-campo input:not([type='checkbox']):focus {
+  outline: none;
+  border-color: #4a8be0;
+  box-shadow: 0 0 0 3px rgba(74, 139, 224, 0.2);
+}
+
+.conta-campo input:disabled { background: #f4f6f9; cursor: not-allowed; }
+
+.conta-campo .conta-invalido { border-color: #b91c1c; }
+.conta-campo .conta-invalido:focus { box-shadow: 0 0 0 3px rgba(185, 28, 28, 0.15); }
+
+.conta-dica { font-size: 12px; color: #6b7686; }
+.conta-erro { font-size: 12px; color: #b91c1c; }
+
+/* Palavra-passe com botão mostrar/ocultar */
+.conta-senha { position: relative; }
+.conta-senha input { padding-right: 84px !important; }
+
+.conta-olho {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%);
+  border: 0;
+  background: none;
+  padding: 6px 8px;
+  border-radius: 6px;
+  font: inherit;
+  font-size: 13px;
+  color: #3a74c4;
+  cursor: pointer;
+}
+
+.conta-olho:hover { background: #eef4fc; }
+
+/* Força da palavra-passe */
+.conta-forca {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.conta-forca-barras {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+}
+
+.conta-forca-barras span {
+  height: 5px;
+  border-radius: 999px;
+  background: #e2e6ec;
+  transition: background 0.2s;
+}
+
+.conta-forca-1 span:nth-child(1) { background: #b91c1c; }
+.conta-forca-2 span:nth-child(-n + 2) { background: #b45309; }
+.conta-forca-3 span { background: #15803d; }
+
+.conta-forca-rotulo {
+  flex: none;
+  font-size: 12px;
+  color: #6b7686;
+}
+
+/* Aceitar termos */
+.conta-campo .conta-check {
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 400;
+  color: #3a4556;
+  cursor: pointer;
+}
+
+.conta-check input { margin-top: 2px; flex: none; }
+
+.conta-botao {
+  width: 100%;
+  margin-top: 4px;
+  padding: 12px 16px;
+  border: 0;
+  border-radius: 10px;
+  font: inherit;
+  font-weight: 600;
+  color: #fff;
+  background: linear-gradient(135deg, #4a8be0, #3fbfd9);
+  cursor: pointer;
+  transition: filter 0.15s, transform 0.05s;
+}
+
+.conta-botao:hover:not(:disabled) { filter: brightness(1.06); }
+.conta-botao:active:not(:disabled) { transform: translateY(1px); }
+.conta-botao:disabled { opacity: 0.7; cursor: not-allowed; }
+
+.conta-alerta {
+  margin-bottom: 14px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: #fee2e2;
+  color: #b91c1c;
+  font-size: 14px;
+}
+
+.conta-alt {
+  margin: 18px 0 0;
+  font-size: 14px;
+  color: #6b7686;
+}
+
+.conta-alt a {
+  color: #3a74c4;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.conta-alt a:hover { text-decoration: underline; }
+
+@media (max-width: 420px) {
+  .conta-card { padding: 24px 18px 18px; border-radius: 14px; }
+}
